@@ -1,3 +1,4 @@
+package ec.edu.ups.utils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,7 +13,7 @@ import javax.sql.DataSource;
 
 public class Resources {
 
-    String dsName = "java:jboss/datasources/sistemaTranDS";
+    String dsName = "java:jboss/datasources/parqueaderoDS";
 
     @Produces
     private Connection createConnection() throws SQLException, NamingException {

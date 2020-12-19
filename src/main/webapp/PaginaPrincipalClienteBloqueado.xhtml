@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <h:head>
+        <f:metadata>
+            <f:viewParam name="cedula" value="#{clientesBean.cedulaParametro}"></f:viewParam>
+        </f:metadata>
+    </h:head>
+    <h:body>
+        <ui:composition template="template/templateCliente2Bloqueo.xhtml">
+            <ui:define name="title"> Cliente bloqueado </ui:define>
+            <ui:param name="ced" value="#{clientesBean.cedulaParametro}" />
+            <ui:param name="nombre"
+                      value="#{clientesBean.buscarCuentaDeAhorro.cliente.nombre}" />
+            <ui:define name="content">
+                <label>
+                    Lo sentimos usted ha excedido el numero de intentos incorrectos, por favor comuniquese al 895-5982 o acercaquese a nuestras oficinas para poderle ayudar.
+                </label>
+                <li>
+                    <a href="index.xhtml">
+                           Regresar ->
+                    </a>
+                </li>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

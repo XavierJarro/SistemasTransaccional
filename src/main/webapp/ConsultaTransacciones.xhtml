@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <h:head>
+        <title>Transacciones Entre Fechas</title>
+    </h:head>
+    <h:body>
+
+
+        <ui:composition template="template/templateCliente2.xhtml">
+
+            <ui:define name="title"> Detalle de transacciones</ui:define> 
+            <ui:param name="ced" value="#{clientesBean.cedulaParametro}" /> 
+            <ui:param name="nombre" value="#{clientesBean.buscarCuentaDeAhorro.cliente.nombre}" /> 
+            <ui:define name="content"> 
+                <script type="text/javascript">
+                    PrimeFaces.locales['es'] = {
+                        closeText: 'Cerrar',
+                        prevText: 'Anterior',
+                        nextText: 'Siguiente',
+                        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril',
+                            'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre',
+                            'Octubre', 'Noviembre', 'Diciembre'],
+                        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May',
+                            'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles',
+                            'Jueves', 'Viernes', 'Sábado'],
+                        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie',
+                            'Sab'],
+                        dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                        weekHeader: 'Semana',
+                        firstDay: 1,
+                        isRTL: false,
+                        showMonthAfterYear: false,
+                        yearSuffix: '',
+                        timeOnlyTitle: 'Sólo hora',
+                        timeText: 'Tiempo',
+                        hourText: 'Hora',
+                        minuteText: 'Minuto',
+                        secondText: 'Segundo',
+                        currentText: 'Fecha actual',
+                        ampm: false,
+                        month: 'Mes',
+                        week: 'Semana',
+                        day: 'Día',
+                        allDayText: 'Todo el día'
+                    };
+                </script>
+                <h:form>
+                    <div>
+                        <h:panelGrid id="grid" columns="3" cellpadding="3">
+
+                            <p:outputLabel value="Tipo de movimiento" />
+                            <p:outputLabel for="fechaInicio" value="Fecha desde" />
+                            <p:outputLabel for="fechaFin" value="Fecha hasta" />
+
+                            <h:selectOneMenu id="combobox"
+                                             value="#{clientesBean.tipoTransaccion}">
+                                <f:selectItem itemValue="Todos" itemLabel="Todos" />
+                                <f:selectItem itemValue="Depositos" itemLabel="Depositos" />
+                                <f:selectItem itemValue="Retiros" itemLabel="Retiros" />
+                            </h:selectOneMenu>
+                            
+                            <p:calendar id="fechaInicio" value="#{clientesBean.fechaInicio}"
+                                        showOn="button" pattern="yyyy-MM-dd" locale="es" navigator="true" />
+                            
+                            <p:calendar id="fechaFin" value="#{clientesBean.fechaFinal}"
+                                        showOn="button" pattern="yyyy-MM-dd">
+                            </p:calendar>
+                            <h:outputText id="valueError"
+                                          value="#{clientesBean.fechasInvalidas}" style="color: red" />
+
+
+                            <p:messages id="messages" showDetail="true"
+                                        closable="true" />
+
+
+                        </h:panelGrid>
+                        <br></br><br></br>
+                        <h:commandButton value="Filtrar"
+                                         action="#{clientesBean.validarFechas2()}" class="btn btn-success">
+                            <f:ajax render="Trans valueError"
+                                    execute="fechaInicio fechaFin combobox" />
+                        </h:commandButton>
+                    </div>
+                </h:form>
+                <h:panelGroup id="Trans">
+                    <h:form id="tels">
+                        <br></br>
+                        <br></br>
+                        <p:outputLabel value="TRANSACCIONES" />
+                        <h:dataTable id="tblTransacciones"
+                                     value="#{clientesBean.lstTransacciones}" var="transaccion"
+                                     class="table table-bordered table-hover table-striped">
+                            <h:column>
+                                <f:facet name="header"># CUENTA</f:facet>
+                                    #{clientesBean.buscarCuentaDeAhorro.numeroCuentaDeAhorro}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">TIPO</f:facet>                                    
+                                    #{transaccion.tipo}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">FECHA</f:facet>
+                                    #{transaccion.fecha}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">SALDO</f:facet>
+                                    #{transaccion.saldoCuenta}
+                            </h:column>
+                        </h:dataTable>
+                    </h:form>
+                </h:panelGroup>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

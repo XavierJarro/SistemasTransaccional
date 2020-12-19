@@ -15,12 +15,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<persistence version="2.2"
-             xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="
-        http://xmlns.jcp.org/xml/ns/persistence
-        http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">    
-    <persistence-unit name="sistemaTransaccionalPersistenceUnit">
+<persistence version="2.2" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="         http://xmlns.jcp.org/xml/ns/persistence         http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+    <persistence-unit name="SitemasTransaccional2PersistenceUnit">
         <!-- If you are running in a production environment, add a managed
         data source, this configuration uses the JakartaEE default data source is just for development and testing! -->
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
@@ -31,12 +27,11 @@
                 Hibernate property instead:
                 <property name="hibernate.hbm2ddl.auto" value="create-drop" />
             -->
-            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="javax.persistence.schema-generation.database.action" value="none"/>
             <property name="javax.persistence.schema-generation.create-source" value="metadata"/>
             <property name="javax.persistence.schema-generation.drop-source" value="metadata"/>
-
             <!-- Properties for Hibernate -->
-            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
         </properties>
     </persistence-unit>

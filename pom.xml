@@ -19,11 +19,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>ec.edu.ups</groupId>
-    <artifactId>sistemaTransaccional</artifactId>
+    <artifactId>SitemasTransaccional2</artifactId>
     <version>1</version>
     
     <packaging>war</packaging>
-    <name>sistemaTransaccional</name>
+    <name>SitemasTransaccional2</name>
     <description>Insert description for your project here.</description>
 
     <properties>
@@ -78,18 +78,6 @@
             <id>jboss-enterprise-maven-repository</id>
             <name>JBoss Enterprise Maven Repository</name>
             <url>https://maven.repository.redhat.com/ga/</url>
-        </repository>
-        <repository>
-            <id>java.net.m2</id>
-            <name>java.net m2 repo</name>
-            <url>http://download.java.net/maven/2</url>
-        </repository>
-
-        <repository>
-            <id>prime-repo</id>
-            <name>PrimeFaces Maven Repository</name>
-            <url>http://repository.primefaces.org</url>
-            <layout>default</layout>
         </repository>
     </repositories>
     <pluginRepositories>
@@ -194,21 +182,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        
-        <!-- Optional, but highly recommended -->
-        <!-- Arquillian allows you to test enterprise code such as EJBs and 
-        Transactional(JTA) JPA from JUnit/TestNG -->
-        <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-            <scope>test</scope>
-        </dependency>
-      
-        <dependency>
-            <groupId>org.jboss.arquillian.protocol</groupId>
-            <artifactId>arquillian-protocol-servlet</artifactId>
-            <scope>test</scope>               
-        </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>javax.mail-api</artifactId>
@@ -220,6 +193,8 @@
             <artifactId>javax.mail</artifactId>
             <version>1.5.5</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api -->
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
@@ -245,6 +220,26 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>2.11.0</version>
+        </dependency>
+        <!-- Optional, but highly recommended -->
+        <!-- Arquillian allows you to test enterprise code such as EJBs and 
+        Transactional(JTA) JPA from JUnit/TestNG -->
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+      
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet</artifactId>
+            <scope>test</scope>               
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>6.15.0</version>
         </dependency>
     </dependencies>
 	

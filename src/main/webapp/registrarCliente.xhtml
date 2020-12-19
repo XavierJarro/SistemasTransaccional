@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:head>
+        <title>Registrar Cliente</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <h:panelGrid columns="2">
+                <h:outputLabel value="Cedula" />
+                <h:inputText value="#{clientesBean.cliente.cedula}" />
+
+                <h:outputLabel value="Nombre" />
+                <h:inputText value="#{clientesBean.cliente.nombre}" />
+
+
+                <h:outputLabel value="Apellido" />
+                <h:inputText value="#{clientesBean.cliente.apellido}" />
+
+
+                <h:outputLabel value="Direccion" />
+                <h:inputText value="#{clientesBean.cliente.direccion}" />
+
+
+                <h:outputLabel value="Telefono 1" />
+                <h:inputText value="#{clientesBean.cliente.telefono1}" />
+
+
+                <h:outputLabel value="Telefono 2" />
+                <h:inputText value="#{clientesBean.cliente.telefono2}" />
+
+
+                <h:outputLabel value="Correo Electronico" />
+                <h:inputText value="#{clientesBean.cliente.correo}" />
+
+
+
+                <h:outputLabel value="" />
+                <h:commandButton action="#{clientesBean.crearCliente()}" value="Guardar" />
+
+            </h:panelGrid>
+
+        </h:form>
+    </h:body>
+</html>
