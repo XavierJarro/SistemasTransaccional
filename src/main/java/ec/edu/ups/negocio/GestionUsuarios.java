@@ -65,12 +65,14 @@ import ec.edu.ups.dao.ClienteDAO;
 import ec.edu.ups.dao.CuentaDeAhorroDAO;
 import ec.edu.ups.dao.EmpleadoDAO;
 import ec.edu.ups.dao.SesionClienteDAO;
+import ec.edu.ups.dao.SolicitudPolizaDAO;
 import ec.edu.ups.dao.TransaccionDAO;
 import ec.edu.ups.dao.TransferenciaDAO;
 import ec.edu.ups.modelo.Cliente;
 import ec.edu.ups.modelo.CuentaDeAhorro;
 import ec.edu.ups.modelo.Empleado;
 import ec.edu.ups.modelo.SesionCliente;
+import ec.edu.ups.modelo.SolicitudPoliza;
 import ec.edu.ups.modelo.Transaccion;
 import ec.edu.ups.modelo.Transferencia;
 import java.util.List;
@@ -98,6 +100,8 @@ public class GestionUsuarios implements GestionUsuarioLocal {
     private EmpleadoDAO empleadoDAO;
     @Inject
     private TransferenciaDAO transferenciaLocalDAO;
+    @Inject
+    private SolicitudPolizaDAO solicitudPolizaDAO;
 
     public String generarNumeroDeCuenta() {
         int numeroInicio = 4040;
@@ -515,6 +519,17 @@ public class GestionUsuarios implements GestionUsuarioLocal {
     public double valorDecimalCr(double valor) {
         String num = String.format(Locale.ROOT, "%.2f", valor);
         return Double.parseDouble(num);
+    }
+
+    public boolean verificarSolicitudSolicitando(String cedulaCliente) {
+        List<SolicitudPoliza> solicitudes = solicitudPolizaDAO.getSolicitudes();
+        for (SolicitudPoliza solicitud : solicitudes) {
+            if (solicitud.getEstado().equalsIgnoreCase("Solicitando")
+                    && solicitud.getClientePoliza().getCedula().equalsIgnoreCase(cedulaCliente)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

@@ -21,10 +21,14 @@ public class SolicitudPoliza {
     private int codigoPoliza;
     @OneToOne
     @JoinColumn(name = "cedula_cliente")
-    private Cliente clienteCredito;
+    private Cliente clientePoliza;
     private double montoPoliza;
-    private String mesesPoliza;
+    private int mesesPoliza;
     private double tasaPoliza;
+    private String estado;
+    private String saldoCuenta;
+    private byte[] arCedula;
+    private byte[] arPlanillaServicios;
 
     public int getCodigoPoliza() {
         return codigoPoliza;
@@ -34,12 +38,12 @@ public class SolicitudPoliza {
         this.codigoPoliza = codigoPoliza;
     }
 
-    public Cliente getClienteCredito() {
-        return clienteCredito;
+    public Cliente getClientePoliza() {
+        return clientePoliza;
     }
 
-    public void setClienteCredito(Cliente clienteCredito) {
-        this.clienteCredito = clienteCredito;
+    public void setClientePoliza(Cliente clientePoliza) {
+        this.clientePoliza = clientePoliza;
     }
 
     public double getMontoPoliza() {
@@ -50,11 +54,11 @@ public class SolicitudPoliza {
         this.montoPoliza = montoPoliza;
     }
 
-    public String getMesesPoliza() {
+    public int getMesesPoliza() {
         return mesesPoliza;
     }
 
-    public void setMesesPoliza(String mesesPoliza) {
+    public void setMesesPoliza(int mesesPoliza) {
         this.mesesPoliza = mesesPoliza;
     }
 
@@ -66,9 +70,36 @@ public class SolicitudPoliza {
         this.tasaPoliza = tasaPoliza;
     }
 
-    @Override
-    public String toString() {
-        return "SolicitudPoliza{" + "codigoPoliza=" + codigoPoliza + ", clienteCredito=" + clienteCredito + ", montoPoliza=" + montoPoliza + ", mesesPoliza=" + mesesPoliza + ", tasaPoliza=" + tasaPoliza + '}';
+    public byte[] getArCedula() {
+        return arCedula;
+    }
+
+    public void setArCedula(byte[] arCedula) {
+        this.arCedula = arCedula;
+    }
+
+    public byte[] getArPlanillaServicios() {
+        return arPlanillaServicios;
+    }
+
+    public void setArPlanillaServicios(byte[] arPlanillaServicios) {
+        this.arPlanillaServicios = arPlanillaServicios;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getSaldoCuenta() {
+        return saldoCuenta;
+    }
+
+    public void setSaldoCuenta(String saldoCuenta) {
+        this.saldoCuenta = saldoCuenta;
     }
 
 }

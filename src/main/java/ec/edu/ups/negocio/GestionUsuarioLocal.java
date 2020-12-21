@@ -99,4 +99,6 @@ public interface GestionUsuarioLocal {
 
     public double valorDecimalCr(double valor);
 
+    public boolean verificarSolicitudSolicitando(String cedulaCliente);
+
 }

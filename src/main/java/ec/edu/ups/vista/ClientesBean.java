@@ -3,6 +3,7 @@ package ec.edu.ups.vista;
 import ec.edu.ups.modelo.Cliente;
 import ec.edu.ups.modelo.CuentaDeAhorro;
 import ec.edu.ups.modelo.SesionCliente;
+import ec.edu.ups.modelo.SolicitudPoliza;
 import ec.edu.ups.modelo.Transaccion;
 import ec.edu.ups.negocio.GestionUsuarioLocal;
 import java.io.IOException;
@@ -57,12 +58,13 @@ public class ClientesBean {
     private String cedulaGarante;
     private InputStream arCedula;
     private InputStream arPlanillaServicios;
-    private InputStream arRolDePagos;
     private String mensajeGarante;
     private double ingresos;
     private double egresos;
+    private double tasa;
     private boolean editable;
     private int codigoCredito;
+    private SolicitudPoliza solicitudPoliza;
 
     @PostConstruct
     public void init() {
@@ -72,6 +74,17 @@ public class ClientesBean {
         cuentaDeAhorro = new CuentaDeAhorro();
         cliente = new Cliente();
         buscarCuentaDeAhorro = new CuentaDeAhorro();
+        solicitudPoliza = new SolicitudPoliza();
+        tasa = 0.0;
+        solicitudPoliza.setTasaPoliza(tasa);
+    }
+
+    public double getTasa() {
+        return tasa;
+    }
+
+    public void setTasa(double tasa) {
+        this.tasa = tasa;
     }
 
     public Cliente getCliente() {
@@ -316,6 +329,14 @@ public class ClientesBean {
         return hourdateFormat.format(fecha);
     }
 
+    public SolicitudPoliza getSolicitudPoliza() {
+        return solicitudPoliza;
+    }
+
+    public void setSolicitudPoliza(SolicitudPoliza solicitudPoliza) {
+        this.solicitudPoliza = solicitudPoliza;
+    }
+
     public List<SesionCliente> cargarSesiones() {
         List<SesionCliente> lis = gestionUsuarios.obtenerSesionesCliente(cedulaParametro);
         if (lis != null) {
@@ -442,29 +463,30 @@ public class ClientesBean {
         return null;
     }
 
-    /*public String crearSolicitudCredito() throws IOException {
-		System.out.println("ENTRO EN LA SOLICITUD");
-		solicitudDeCredito.setClienteCredito(gestionUsuarios.buscarCliente(cedulaParametro));
-		solicitudDeCredito.setEstadoCredito("Solicitando");
-		solicitudDeCredito.setArCedula(gestionUsuarios.toByteArray(arCedula));
-		solicitudDeCredito.setArPlanillaServicios(gestionUsuarios.toByteArray(arPlanillaServicios));
-		solicitudDeCredito.setArRolDePagos(gestionUsuarios.toByteArray(arRolDePagos));
-		solicitudDeCredito.setGaranteCredito(garante);
-		solicitudDeCredito.setTasaPago(((ingresos - egresos) * 100) / ingresos);
-		if(gestionUsuarios.verificarSolicitudSolicitando(cedulaParametro)) { 
-			gestionUsuarios.guardarSolicitudCredito(solicitudDeCredito);
-			addMessage("Confirmacion", "Solicitud Guardada");
-		}else { 
-			addMessage("Atencion", "Usted ya ha enviado una solicitud de credito para su aprovacion");
-		}
-		garante = new Cliente();
-		solicitudDeCredito = new SolicitudDeCredito();
-		return "SolicitudCredito";
-	}*/
     public String confirmarTasaPago(double ingresos, double egresos) {
         if (egresos > ingresos) {
             return "Los egresos no debe ser mayor a los ingresos";
         }
+        return null;
+    }
+
+    public String obtenerTasa() {
+        double meses = solicitudPoliza.getMesesPoliza();
+        if (meses >= 30 && meses <= 59) {
+            tasa = 5.5;
+        } else if (meses >= 60 && meses <= 89) {
+            tasa = 5.75;
+        } else if (meses >= 90 && meses <= 179) {
+            tasa = 6.25;
+        } else if (meses >= 180 && meses <= 269) {
+            tasa = 7.00;
+        } else if (meses >= 270 && meses <= 359) {
+            tasa = 7.50;
+        } else {
+            tasa = 8.50;
+        }
+        solicitudPoliza.setTasaPoliza(tasa);
+
         return null;
     }
 
@@ -480,24 +502,9 @@ public class ClientesBean {
         arPlanillaServicios = event.getFile().getInputStream();
     }
 
-    /* public void archivo3(FileUploadEvent event) throws IOException {
-        FacesMessage msg = new FacesMessage("Successful", event.getFile().getFileName() + " is uploaded.");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-        arRolDePagos = event.getFile().getInputStream();
-    }*/
-
- /*public void creditosAprovados(String cedula) {   
-		System.out.println("ENTRO EN ESTE PINCHE METODO" + cedulaParametro);
-		lstCreditosAprobados = gestionUsuarios.creditosAprovados(cedula);
-	}  */
     public void cambioVar(int cod) {
         codigoCredito = cod;
         editable = true;
     }
 
-
-    /*public List<DetalleCredito> verDealles(){
-		 List<DetalleCredito> list = gestionUsuarios.verCredito(codigoCredito).getDetalles();
-		 return list;
-	 }*/
 }
