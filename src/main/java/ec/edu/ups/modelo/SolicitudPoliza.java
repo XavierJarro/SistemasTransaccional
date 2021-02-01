@@ -5,6 +5,7 @@
  */
 package ec.edu.ups.modelo;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -20,15 +21,17 @@ public class SolicitudPoliza {
     @Id
     private int codigoPoliza;
     @OneToOne
-    @JoinColumn(name = "cedula_cliente")
     private Cliente clientePoliza;
     private double montoPoliza;
     private int mesesPoliza;
     private double tasaPoliza;
     private String estado;
-    private String saldoCuenta;
+    private double saldoCuenta;
+    @Column(length = 16777216)
     private byte[] arCedula;
+    @Column(length = 16777216)
     private byte[] arPlanillaServicios;
+    private int cantidadPolizas;
 
     public int getCodigoPoliza() {
         return codigoPoliza;
@@ -94,12 +97,20 @@ public class SolicitudPoliza {
         this.estado = estado;
     }
 
-    public String getSaldoCuenta() {
+    public double getSaldoCuenta() {
         return saldoCuenta;
     }
 
-    public void setSaldoCuenta(String saldoCuenta) {
+    public void setSaldoCuenta(double saldoCuenta) {
         this.saldoCuenta = saldoCuenta;
+    }
+
+    public int getCantidadPolizas() {
+        return cantidadPolizas;
+    }
+
+    public void setCantidadPolizas(int cantidadPolizas) {
+        this.cantidadPolizas = cantidadPolizas;
     }
 
 }

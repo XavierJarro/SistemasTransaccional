@@ -5,6 +5,8 @@
  */
 package ec.edu.ups.negocio;
 
+import ec.edu.ups.dao.servicios.Respuesta;
+import ec.edu.ups.dao.servicios.RespuestaTransferenciaExterna;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -15,9 +17,12 @@ import java.util.List;
 import ec.edu.ups.modelo.Cliente;
 import ec.edu.ups.modelo.CuentaDeAhorro;
 import ec.edu.ups.modelo.Empleado;
+import ec.edu.ups.modelo.Poliza;
 import ec.edu.ups.modelo.SesionCliente;
+import ec.edu.ups.modelo.SolicitudPoliza;
 import ec.edu.ups.modelo.Transaccion;
 import ec.edu.ups.modelo.Transferencia;
+import ec.edu.ups.modelo.TransferenciaExterna;
 
 import javax.ejb.Local;
 
@@ -100,5 +105,35 @@ public interface GestionUsuarioLocal {
     public double valorDecimalCr(double valor);
 
     public boolean verificarSolicitudSolicitando(String cedulaCliente);
+
+    public Respuesta obtenerClienteCuentaAhorro(String numeroCuenta);
+
+    public Respuesta loginServicio(String username, String password);
+
+    public Respuesta cambioContraseña(String correo, String contraAntigua, String contraActual);
+
+    public String realizarTransaccion(String cuenta, double monto, String tipoTransaccion);
+
+    public Respuesta realizarTransferencia(String cedula, String cuentaAhorro2, double monto);
+
+    public RespuestaTransferenciaExterna realizarTransferenciaExterna(TransferenciaExterna transferenciaExterna);
+
+    public void guardarSolicitudPoliza(SolicitudPoliza solicituPoliza);
+
+    public Double saldoCuenta(SolicitudPoliza solicitudPoliza);
+
+    public int numeroPolizas(SolicitudPoliza solicitudPoliza);
+
+    public List<SolicitudPoliza> listadoSolicitudPolizas();
+
+    public void actualizarSolicitudPoliza(SolicitudPoliza solicitudPoliza);
+
+    public void rechazarPoliza(Cliente cliente, String razon);
+
+    public void guardarPoliza(Poliza poliza);
+
+    public void aprobarPoliza(Poliza poliza, Cliente cliente);
+    
+    public List<Poliza> polizasAprobados(String cedulaCliente);
 
 }

@@ -2,6 +2,7 @@ package ec.edu.ups.vista;
 
 import ec.edu.ups.modelo.Cliente;
 import ec.edu.ups.modelo.CuentaDeAhorro;
+import ec.edu.ups.modelo.Poliza;
 import ec.edu.ups.modelo.SesionCliente;
 import ec.edu.ups.modelo.SolicitudPoliza;
 import ec.edu.ups.modelo.Transaccion;
@@ -65,6 +66,7 @@ public class ClientesBean {
     private boolean editable;
     private int codigoCredito;
     private SolicitudPoliza solicitudPoliza;
+    private List<Poliza> lstPolizasAprobados;
 
     @PostConstruct
     public void init() {
@@ -77,6 +79,7 @@ public class ClientesBean {
         solicitudPoliza = new SolicitudPoliza();
         tasa = 0.0;
         solicitudPoliza.setTasaPoliza(tasa);
+        lstPolizasAprobados = new ArrayList<Poliza>();
     }
 
     public double getTasa() {
@@ -139,6 +142,14 @@ public class ClientesBean {
         this.fechasInvalidas = fechasInvalidas;
     }
 
+    public List<Poliza> getLstPolizasAprobados() {
+        return lstPolizasAprobados;
+    }
+
+    public void setLstPolizasAprobados(List<Poliza> lstPolizasAprobados) {
+        this.lstPolizasAprobados = lstPolizasAprobados;
+    }
+
     public void setCedulaParametro(String cedulaParametro) {
         this.cedulaParametro = cedulaParametro;
         if (cedulaParametro != null) {
@@ -150,7 +161,7 @@ public class ClientesBean {
                 transaccion = lista.get(lista.size() - 1);
                 ultimosDias();
                 System.out.println(buscarCuentaDeAhorro.getNumeroCuentaDeAhorro() + "---------------------------------------------------------");
-                //creditosAprovados(cedulaParametro);
+                polizasAprobados(cedulaParametro);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -337,6 +348,13 @@ public class ClientesBean {
         this.solicitudPoliza = solicitudPoliza;
     }
 
+    public List<Poliza> getLstListaPolizaAprobados() {
+        return lstPolizasAprobados;
+    }
+    public void setLstListaCreditosAprobados(List<Poliza> lstListaPolizaAprobados) {
+        this.lstPolizasAprobados = lstListaPolizaAprobados;
+    }
+
     public List<SesionCliente> cargarSesiones() {
         List<SesionCliente> lis = gestionUsuarios.obtenerSesionesCliente(cedulaParametro);
         if (lis != null) {
@@ -451,12 +469,10 @@ public class ClientesBean {
 		 * "No se puede consultar entre estas fechas"; }else { fechasInvalidas = true; }
 		 * return "si";
          */
-        Date fechaInicioDate = this.fechaInicio; // String a date
-        Date fechaFinDate = this.fechaFinal; // String a date
-
+        Date fechaInicioDate = this.fechaInicio;
+        Date fechaFinDate = this.fechaFinal;
         System.out.println("Inicial: " + fechaInicioDate);
         System.out.println("Final: " + fechaFinDate);
-        // comprueba si es que inicio esta después que fecha actual
         if (fechaInicioDate.after(fechaFinDate)) {
             return "Fecha inicio mayor";
         }
@@ -472,7 +488,9 @@ public class ClientesBean {
 
     public String obtenerTasa() {
         double meses = solicitudPoliza.getMesesPoliza();
-        if (meses >= 30 && meses <= 59) {
+        if (meses >= 0 && meses <= 29) {
+            tasa = 0.0;
+        } else if (meses >= 30 && meses <= 59) {
             tasa = 5.5;
         } else if (meses >= 60 && meses <= 89) {
             tasa = 5.75;
@@ -505,6 +523,28 @@ public class ClientesBean {
     public void cambioVar(int cod) {
         codigoCredito = cod;
         editable = true;
+    }
+
+    public String crearSolicitudPoliza() throws IOException {
+        System.out.println("ENTRO EN LA SOLICITUD");
+        solicitudPoliza.setClientePoliza(gestionUsuarios.buscarCliente(cedulaParametro));
+        solicitudPoliza.setTasaPoliza(tasa);
+        solicitudPoliza.setEstado("Solicitando");
+        solicitudPoliza.setArCedula(gestionUsuarios.toByteArray(arCedula));
+        solicitudPoliza.setArPlanillaServicios(gestionUsuarios.toByteArray(arPlanillaServicios));
+        if (gestionUsuarios.verificarSolicitudSolicitando(cedulaParametro)) {
+            gestionUsuarios.guardarSolicitudPoliza(solicitudPoliza);
+            addMessage("Confirmacion", "Solicitud Guardada");
+        } else {
+            addMessage("Atencion", "Usted ya ha enviado una solicitud de poliza para su aprovacion");
+        }
+        solicitudPoliza = new SolicitudPoliza();
+        return "SolicitudCredito";
+    }
+
+    public void polizasAprobados(String cedula) {
+        System.out.println("ENTRO EN ESTE PINCHE METODO" + cedulaParametro);
+        lstPolizasAprobados = gestionUsuarios.polizasAprobados(cedula);
     }
 
 }

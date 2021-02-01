@@ -38,7 +38,7 @@
                                     <f:facet name="header">Saldo</f:facet>
                                         #{cuenta.saldoCuentaDeAhorro}
                                 </h:column>
-                                
+
                             </h:dataTable>
                         </div> 
                         <h:commandButton
@@ -46,6 +46,42 @@
                             class="btn btn-success"
                             />
                     </div>
+
+                    <div class="table-responsive">
+                        <h:dataTable value="#{clientesBean.lstPolizasAprobados}"
+                                     var="poliza" class="table table-bordered table-hover table-striped">
+                            <h:column>
+                                <f:facet name="header"># Poliza</f:facet>
+                                    #{poliza.codigoPol}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Plazo</f:facet>
+                                    #{poliza.estado}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Valor Poliza</f:facet>  
+                                    #{poliza.monto}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Interes</f:facet>  
+                                    #{poliza.tasa}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Fecha Vencimiento</f:facet> 
+                                
+
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Consultar coutas de credito</f:facet>
+                                <h:commandButton
+                                    action="#{clientesBean.cambioVar(poliza.codigoPol)}"
+                                    value="Consultar" class="btn btn-success">
+                                    <f:ajax render="Detalles" />
+                                </h:commandButton>
+                            </h:column>
+                        </h:dataTable>
+                    </div>
+
                 </h:form>
 
 

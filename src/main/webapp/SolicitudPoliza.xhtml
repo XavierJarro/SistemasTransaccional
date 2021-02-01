@@ -55,7 +55,7 @@
 
                                                 <div class="form-group">
                                                     <label>Monto</label>
-                                                    <h:inputText id="monto" class="form-control form-control-line">
+                                                    <h:inputText id="monto" class="form-control form-control-line" value="#{clientesBean.solicitudPoliza.montoPoliza}">
                                                     </h:inputText>
 
                                                 </div>
@@ -111,20 +111,13 @@
                                         </div>
 
                                         <!--action=""-->
-                                        <p:commandButton value="Guardar Solicitud"
-
-                                                         update="messages" class="btn btn-success btn-lg">
-                                            <p:confirm header="Confirmacion"
-                                                       message="¿Desea guardar la solicitud de credito?"
-                                                       icon="pi pi-exclamation-triangle" />
+                                        <p:commandButton value="Guardar Solicitud" action="#{clientesBean.crearSolicitudPoliza()}" update="messages" class="btn btn-success btn-lg">
+                                            <p:confirm header="Confirmacion" message="¿Desea guardar la solicitud de poliza?" icon="pi pi-exclamation-triangle" />
                                         </p:commandButton>
 
-                                        <p:confirmDialog global="true" showEffect="fade"
-                                                         hideEffect="fade">
-                                            <p:commandButton value="SI" type="button"
-                                                             styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
-                                            <p:commandButton value="NO" type="button"
-                                                             styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="SI" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                                            <p:commandButton value="NO" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
                                         </p:confirmDialog>
                                     </h:form>
                                 </div>

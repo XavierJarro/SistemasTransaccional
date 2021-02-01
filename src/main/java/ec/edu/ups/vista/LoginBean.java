@@ -1,6 +1,10 @@
 package ec.edu.ups.vista;
 
+import ec.edu.ups.modelo.CuentaDeAhorro;
+import ec.edu.ups.modelo.DetallePoliza;
 import ec.edu.ups.modelo.Empleado;
+import ec.edu.ups.modelo.Poliza;
+import ec.edu.ups.modelo.SolicitudPoliza;
 import ec.edu.ups.negocio.GestionUsuarioLocal;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -33,21 +37,24 @@ public class LoginBean {
     private GestionUsuarioLocal empleadoON;
 
     private String usuario;
-
     private String contrasena;
-
-    //private List<SolicitudDeCredito> solicitudes;
-    //private SolicitudDeCredito solicitudDeCredito;
-    //private SolicitudDeCredito solicitudDeCreditoAux;
+    private List<SolicitudPoliza> solicitudes;
+    private SolicitudPoliza solicitudDePoliza;
+    private SolicitudPoliza solicitudPolizaAux;
     private Empleado empleado;
+    private boolean editable = false;
+    private boolean editabledos = false;
+    private String motivo;
+    private String tipoC;
 
     public LoginBean() {
         init();
     }
 
     public void init() {
-        //solicitudes = new ArrayList<SolicitudDeCredito>();
+        solicitudes = new ArrayList<SolicitudPoliza>();
         //loadDataSol();
+        empleado = new Empleado();
         empleado = new Empleado();
 
     }
@@ -84,6 +91,62 @@ public class LoginBean {
         this.empleado = empleado;
     }
 
+    public List<SolicitudPoliza> getSolicitudes() {
+        return solicitudes;
+    }
+
+    public void setSolicitudes(List<SolicitudPoliza> solicitudes) {
+        this.solicitudes = solicitudes;
+    }
+
+    public SolicitudPoliza getSolicitudDePoliza() {
+        return solicitudDePoliza;
+    }
+
+    public void setSolicitudDePoliza(SolicitudPoliza solicitudDePoliza) {
+        this.solicitudDePoliza = solicitudDePoliza;
+    }
+
+    public SolicitudPoliza getSolicitudPolizaAux() {
+        return solicitudPolizaAux;
+    }
+
+    public void setSolicitudPolizaAux(SolicitudPoliza solicitudPolizaAux) {
+        this.solicitudPolizaAux = solicitudPolizaAux;
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    public boolean isEditabledos() {
+        return editabledos;
+    }
+
+    public void setEditabledos(boolean editabledos) {
+        this.editabledos = editabledos;
+    }
+
+    public String getMotivo() {
+        return motivo;
+    }
+
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
+    }
+
+    public String getTipoC() {
+        return tipoC;
+    }
+
+    public void setTipoC(String tipoC) {
+        this.tipoC = tipoC;
+    }
+
     public String validarUsuario() {
         Empleado emp;
         try {
@@ -95,7 +158,6 @@ public class LoginBean {
                     addMessage("OK", "Ingreso");
 
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("empleado", emp);
-                    //FacesContext contex2 = FacesContext.getCurrentInstance();
                     FacesContext contex = FacesContext.getCurrentInstance();
 
                     contex.getExternalContext().redirect("PaginaCajero.xhtml");
@@ -103,10 +165,10 @@ public class LoginBean {
                 }
             } else if (emp != null && emp.getRol().equalsIgnoreCase("AsistenteDeCapacitaciones")) {
                 try {
-                    //loadDataSol();
+                    loadDataSol();
                     FacesContext contex = FacesContext.getCurrentInstance();
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("empleado", emp);
-                    contex.getExternalContext().redirect("PaginaJefeCredito.xhtml");
+                    contex.getExternalContext().redirect("AsistenteCapacitaciones.xhtml");
                 } catch (Exception e) {
                 }
             } else if (emp != null && emp.getRol().equalsIgnoreCase("Admin")) {
@@ -125,270 +187,221 @@ public class LoginBean {
         return null;
     }
 
-    /*public void loadDataSol() {
-		solicitudes = new ArrayList<SolicitudDeCredito>();
-		System.out.println("ENTRAAAAAAAA EN LOADDATASOL");
-		// solicitudes = empleadoON.listadoSolicitudDeCreditos();
-		List<SolicitudDeCredito> soli = empleadoON.listadoSolicitudDeCreditos();
-		System.out.println(soli.size());
-		List<SolicitudDeCredito> actual = new ArrayList<SolicitudDeCredito>();
-		for (SolicitudDeCredito sol : soli) {
-			if (sol.getEstadoCredito().equals("Solicitando")) {
-				actual.add(sol);
-			}
-		}
-		solicitudes = actual;
-	}*/
+    public void loadDataSol() {
+        solicitudes = new ArrayList<SolicitudPoliza>();
+        System.out.println("ENTRAAAAAAAA EN LOADDATASOL");
+        List<SolicitudPoliza> soli = empleadoON.listadoSolicitudPolizas();
+        System.out.println(soli.size());
+        List<SolicitudPoliza> actual = new ArrayList<SolicitudPoliza>();
+        for (SolicitudPoliza sol : soli) {
+            if (sol.getEstado().equals("Solicitando")) {
+                actual.add(sol);
+            }
+        }
+        solicitudes = actual;
+    }
 
- /*public List<SolicitudDeCredito> loTTT() {
-		System.out.println("ENTRAAAAAAAA EN LOADDATASOL");
-		// solicitudes = empleadoON.listadoSolicitudDeCreditos();
-		List<SolicitudDeCredito> soli = empleadoON.listadoSolicitudDeCreditos();
-		System.out.println(soli.size());
-		List<SolicitudDeCredito> actual = new ArrayList<SolicitudDeCredito>();
-		for (SolicitudDeCredito sol : soli) {
-			if (sol.getEstadoCredito().equals("Solicitando")) {
-				actual.add(sol);
-			}
-		}
-		return actual;
-	}*/
+    public List<SolicitudPoliza> loTTT() {
+        System.out.println("ENTRAAAAAAAA EN LOADDATASOL");
+        List<SolicitudPoliza> soli = empleadoON.listadoSolicitudPolizas();
+        System.out.println(soli.size());
+        List<SolicitudPoliza> actual = new ArrayList<SolicitudPoliza>();
+        for (SolicitudPoliza sol : soli) {
+            if (sol.getEstado().equals("Solicitando")) {
+                actual.add(sol);
+            }
+        }
+        return actual;
+    }
 
- /*public List<SolicitudDeCredito> loadDataSolAR(String apr) {
-		System.out.println("ENTRAAAAAAAA APROBADOS RECHAZADOS");
-		// solicitudes = empleadoON.listadoSolicitudDeCreditos();
-		List<SolicitudDeCredito> soli = empleadoON.listadoSolicitudDeCreditos();
-		System.out.println(soli.size());
-		List<SolicitudDeCredito> actual = new ArrayList<SolicitudDeCredito>();
-		List<SolicitudDeCredito> actual2 = new ArrayList<SolicitudDeCredito>();
-		for (SolicitudDeCredito sol : soli) {
-			if (sol.getTipoCliente().equals("1")) {
-				actual.add(sol);
-			} else if (sol.getTipoCliente().equals("2")) {
-				actual2.add(sol);
-			}
-		}
+    /* public List<SolicitudPoliza> loadDataSolAR(String apr) {
+        System.out.println("ENTRAAAAAAAA APROBADOS RECHAZADOS");
+        List<SolicitudPoliza> soli = empleadoON.listadoSolicitudPolizas();
+        System.out.println(soli.size());
+        List<SolicitudPoliza> actual = new ArrayList<SolicitudPoliza>();
+        List<SolicitudPoliza> actual2 = new ArrayList<SolicitudPoliza>();
+        for (SolicitudPoliza sol : soli) {
+            if (sol.getTipoCliente().equals("1")) {
+                actual.add(sol);
+            } else if (sol.getTipoCliente().equals("2")) {
+                actual2.add(sol);
+            }
+        }
 
-		if (apr.equals("Ap")) {
-			return actual;
-		} else if (apr.equals("Rch")) {
-			return actual2;
-		}
-		return null;
-	}*/
+        if (apr.equals("Ap")) {
+            return actual;
+        } else if (apr.equals("Rch")) {
+            return actual2;
+        }
+        return null;
+    }*/
+    public String cargarSol(int cod) {
+        editable = true;
 
- /*public String cargarSol(int cod) {
-		editable = true;
-		
+        for (SolicitudPoliza sol : solicitudes) {
+            if (sol.getCodigoPoliza() == cod) {
+                solicitudDePoliza = sol;
+            }
+        }
+        return null;
+    }
 
-		for (SolicitudDeCredito sol : solicitudes) {
-			if (sol.getCodigoCredito() == cod) {
-				solicitudDeCredito = sol;
-				tipoC = tipoCliente(sol);
-			}
-		}
-		return null;
-	}*/
+    /*public String cargarSolAR(int cod) {
+        editable = true;
 
- /*public String cargarSolAR(int cod) {
-		editable = true;
-		
-		List<SolicitudDeCredito> solii = empleadoON.listadoSolicitudDeCreditos();
-		for (SolicitudDeCredito sol : solii) {
-			if (sol.getCodigoCredito() == cod) {
-				solicitudDeCreditoAux = sol;
-				tipoC = tipoCliente(sol);
-			}
-		}
-		return null;
-	}*/
+        List<SolicitudPoliza> solii = empleadoON.listadoSolicitudPolizas();
+        for (SolicitudPoliza sol : solii) {
+            if (sol.getCodigoPoliza() == cod) {
+                solicitudPolizaAux = sol;
+                tipoC = tipoCliente(sol);
+            }
+        }
+        return null;
+    }*/
 
- /*public String tipoCliente(SolicitudDeCredito credito) {
-		String tipo = credito.getTipoCliente();
-		if (tipo.equals("1")) {
-			String mensaje = "Este un Buen cliente para el credito, Se recomienda Aprobar";
-			return mensaje;
-		} else if (tipo.equalsIgnoreCase("2")) {
-			String mensaje2 = "Es un MAL CLIENTE  para el credito, Se recomienda Rechazar";
-			return mensaje2;
-		}
+ /*public String tipoCliente(SolicitudPoliza poliza) {
+        String tipo = poliza.getTipoCliente();
+        if (tipo.equals("1")) {
+            String mensaje = "Este un Buen cliente para el credito, Se recomienda cambio";
+            return mensaje;
+        } else if (tipo.equalsIgnoreCase("2")) {
+            String mensaje2 = "Es un MAL CLIENTE  para el credito, Se recomienda Rechazar";
+            return mensaje2;
+        }
 
-		return " ";
-	}*/
+        return " ";
+    }*/
+    public String aprobar(int cod) {
+        System.out.println("//////-/////////-/////" + empleado.getNombre());
+       //cod = solicitudDePoliza.getCodigoPoliza();
+        System.out.println("codigooooooooooooooooooooooooooooooooooo-------------------------------------"+cod);
+        for (SolicitudPoliza sol : solicitudes) {
+            if (sol.getCodigoPoliza() == cod && sol.getEstado().equalsIgnoreCase("Solicitando")) {
 
- /*public String aprobar(int cod) {
-		System.out.println("//////-/////////-/////" + empleado.getNombre());
-		for (SolicitudDeCredito sol : solicitudes) {
-			if (sol.getCodigoCredito() == cod && sol.getEstadoCredito().equalsIgnoreCase("Solicitando")) {
+                Poliza poliza = new Poliza();
+                poliza.setFechaRegistro(new Date());
+                poliza.setInteres(12);
+                poliza.setMonto(sol.getMontoPoliza());
+                poliza.setJefeC(empleado);
+                poliza.setEstado("Aprobado");
+                poliza.setSolicitud(sol);
+                //List<DetallePoliza> li = empleadoON.crearTablaAmortizacion(Integer.parseInt(sol.getMesesPoliza(),sol.getMontoPoliza(), 12.00);
+                //System.out.println(li.toString());
+                //poliza.setFechaVencimiento(li.get(li.size() - 1).getFechaPago());
+                //poliza.setDetalles(li);
+                empleadoON.guardarPoliza(poliza);
+                empleadoON.aprobarPoliza(poliza, sol.getClientePoliza());
+                solicitudDePoliza.setEstado("Aprobado");
+                empleadoON.actualizarSolicitudPoliza(solicitudDePoliza);
+                CuentaDeAhorro ccv = empleadoON.buscarCuentaDeAhorroCliente(sol.getClientePoliza().getCedula());
+                ccv.setSaldoCuentaDeAhorro(ccv.getSaldoCuentaDeAhorro() - sol.getMontoPoliza());
+                empleadoON.actualizarCuentaDeAhorro(ccv);
+                //solicitudDePoliza = new SolicitudPoliza();
+                editable = false;
+                editabledos = false;
+                loadDataSol();
+            }
+        }
 
-				Credito credito = new Credito();
-				credito.setFechaRegistro(new Date());
-				credito.setInteres(12);
-				credito.setMonto(sol.getMontoCredito());
-				credito.setJefeC(empleado);
-				credito.setEstado("Pendiente");
-				credito.setSolicitud(sol);
-				List<DetalleCredito> li = empleadoON.crearTablaAmortizacion(Integer.parseInt(sol.getMesesCredito()),
-						sol.getMontoCredito(), 12.00);
-				System.out.println(li.toString());
-				credito.setFechaVencimiento(li.get(li.size()-1).getFechaPago());
-				credito.setDetalles(li);
-				empleadoON.guardarCredito(credito);
-				empleadoON.aprobarCredito(credito, sol.getClienteCredito());
-				System.out.println(credito);
-				solicitudDeCredito.setEstadoCredito("Aprobado");
-				empleadoON.actualizarSolicitudCredito(solicitudDeCredito);
-				CuentaDeAhorro ccv = empleadoON.buscarCuentaDeAhorroCliente(sol.getClienteCredito().getCedula());
-				ccv.setSaldoCuentaDeAhorro(ccv.getSaldoCuentaDeAhorro() + sol.getMontoCredito());
-				empleadoON.actualizarCuentaDeAhorro(ccv);
-				solicitudDeCredito = new SolicitudDeCredito();
-				editable = false;
-				editabledos = false;
-				loadDataSol();
-			}
-		}
+        return "AsistenteCapacitaciones";
+    }
 
-		return "PaginaJefeCredito";
-	}*/
+    public String rechazar() {
+        solicitudDePoliza.setEstado("Rechazado");
+        empleadoON.actualizarSolicitudPoliza(solicitudDePoliza);
+        System.out.println(motivo);
+        empleadoON.rechazarPoliza(solicitudDePoliza.getClientePoliza(), motivo);
+        //solicitudDePoliza = new SolicitudPoliza();
+        editable = false;
+        editabledos = false;
+        loadDataSol();
+        return "AsistenteCapacitaciones";
+    }
 
- /*public String rechazar() {
-		solicitudDeCredito.setEstadoCredito("Rechazado");
+    public void cambio() {
+        editable = false;
+        editabledos = true;
+    }
 
-		empleadoON.actualizarSolicitudCredito(solicitudDeCredito);
-		System.out.println(motivo);
-		// System.out.println(solicitudDeCredito.getCodigoCredito());
-		empleadoON.rechazarCredito(solicitudDeCredito.getClienteCredito(), motivo);
-		solicitudDeCredito = new SolicitudDeCredito();
-		editable = false;
-		editabledos = false;
-		loadDataSol();
-		return "PaginaJefeCredito";
-	}
-	
-	public void cambio() {
-		editable = false;
-		editabledos = true;
-	}*/
- /*public void ver(String tipo) throws IOException {
+    public void ver(String tipo) throws IOException {
 
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		ExternalContext externalContext = facesContext.getExternalContext();
-		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+        File file = File.createTempFile("archivoTemp", ".pdf");
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            if (tipo.equalsIgnoreCase("cedula")) {
+                fos.write(solicitudDePoliza.getArCedula());
+            } else if (tipo.equalsIgnoreCase("planilla")) {
+                fos.write(solicitudDePoliza.getArPlanillaServicios());
+            }
+        }
+        BufferedInputStream input = null;
+        BufferedOutputStream output = null;
 
-		File file = File.createTempFile("archivoTemp", ".pdf");
-		try (FileOutputStream fos = new FileOutputStream(file)) {
-			if (tipo.equalsIgnoreCase("cedula")) {
-				fos.write(solicitudDeCredito.getArCedula());
-			} else if (tipo.equalsIgnoreCase("planilla")) {
-				fos.write(solicitudDeCredito.getArPlanillaServicios());
-			} else if (tipo.equalsIgnoreCase("rol")) {
-				fos.write(solicitudDeCredito.getArRolDePagos());
-			}
+        try {
+            input = new BufferedInputStream(new FileInputStream(file), 10240);
+            response.reset();
+            response.setHeader("Content-Type", "application/pdf");
+            response.setHeader("Content-Length", String.valueOf(file.length()));
+            response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
+            output = new BufferedOutputStream(response.getOutputStream(), 10240);
+            byte[] buffer = new byte[10240];
+            int length;
+            while ((length = input.read(buffer)) > 0) {
+                output.write(buffer, 0, length);
+            }
+            output.flush();
+        } finally {
 
-		}
-		BufferedInputStream input = null;
-		BufferedOutputStream output = null;
+        }
+        facesContext.responseComplete();
+    }
 
-		try {
-			// Open file.
-			input = new BufferedInputStream(new FileInputStream(file), 10240);
+    public void ver2(String tipo) throws IOException {
 
-			// Init servlet response.
-			response.reset();
-			response.setHeader("Content-Type", "application/pdf");
-			response.setHeader("Content-Length", String.valueOf(file.length()));
-			response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+        File file = File.createTempFile("archivoTemp", ".pdf");
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            if (tipo.equalsIgnoreCase("cedula")) {
+                fos.write(solicitudDePoliza.getArCedula());
+            } else if (tipo.equalsIgnoreCase("planilla")) {
+                fos.write(solicitudDePoliza.getArPlanillaServicios());
+            }
 
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
+        }
+        BufferedInputStream input = null;
+        BufferedOutputStream output = null;
 
-			// Finalize task.
-			output.flush();
-		} finally {
+        try {
+            input = new BufferedInputStream(new FileInputStream(file), 10240);
+            response.reset();
+            response.setHeader("Content-Type", "application/pdf");
+            response.setHeader("Content-Length", String.valueOf(file.length()));
+            response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
+            output = new BufferedOutputStream(response.getOutputStream(), 10240);
+            byte[] buffer = new byte[10240];
+            int length;
+            while ((length = input.read(buffer)) > 0) {
+                output.write(buffer, 0, length);
+            }
+            output.flush();
+        } finally {
 
-		}
+        }
+        facesContext.responseComplete();
+    }
 
-		// Inform JSF that it doesn't need to handle response.
-		// This is very important, otherwise you will get the following exception in the
-		// logs:
-		// java.lang.IllegalStateException: Cannot forward after response has been
-		// committed.
-		facesContext.responseComplete();
-	}
-
-	public void ver2(String tipo) throws IOException {
-
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		ExternalContext externalContext = facesContext.getExternalContext();
-		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-
-		File file = File.createTempFile("archivoTemp", ".pdf");
-		try (FileOutputStream fos = new FileOutputStream(file)) {
-			if (tipo.equalsIgnoreCase("cedula")) {
-				fos.write(solicitudDeCreditoAux.getArCedula());
-			} else if (tipo.equalsIgnoreCase("planilla")) {
-				fos.write(solicitudDeCreditoAux.getArPlanillaServicios());
-			} else if (tipo.equalsIgnoreCase("rol")) {
-				fos.write(solicitudDeCreditoAux.getArRolDePagos());
-			}
-
-		}
-		BufferedInputStream input = null;
-		BufferedOutputStream output = null;
-
-		try {
-			// Open file.
-			input = new BufferedInputStream(new FileInputStream(file), 10240);
-
-			// Init servlet response.
-			response.reset();
-			response.setHeader("Content-Type", "application/pdf");
-			response.setHeader("Content-Length", String.valueOf(file.length()));
-			response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
-			output = new BufferedOutputStream(response.getOutputStream(), 10240);
-
-			// Write file contents to response.
-			byte[] buffer = new byte[10240];
-			int length;
-			while ((length = input.read(buffer)) > 0) {
-				output.write(buffer, 0, length);
-			}
-
-			// Finalize task.
-			output.flush();
-		} finally {
-
-		}
-
-		// Inform JSF that it doesn't need to handle response.
-		// This is very important, otherwise you will get the following exception in the
-		// logs:
-		// java.lang.IllegalStateException: Cannot forward after response has been
-		// committed.
-		facesContext.responseComplete();
-	}*/
- /*public String datos() {
-		String res = empleadoON.getDatos();
-		System.out.println(res);
-		return "";
-	}*/
     public void addMessage(String summary, String detail) {
         System.out.println(summary + "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmkkk" + detail);
-        /*FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, detail);
-	        FacesContext.getCurrentInstance().addMessage(null, message);*/
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, summary, detail));
     }
 
     public String logout() {
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         return "InicioUsuarios?faces-redirect=true";
-        // return null;
-
     }
 
 }
