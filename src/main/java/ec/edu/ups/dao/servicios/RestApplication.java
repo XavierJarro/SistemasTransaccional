@@ -6,12 +6,13 @@
 package ec.edu.ups.dao.servicios;
 
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
 
 /**
  *
  * @author Starman
  */
-@ApplicationPath("/rs")
-public class RestApplication {
+@ApplicationPath("/restservice")
+public class RestApplication extends Application{
 
 }

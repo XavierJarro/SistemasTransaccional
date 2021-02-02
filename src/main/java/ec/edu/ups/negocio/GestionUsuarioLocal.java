@@ -10,7 +10,6 @@ import ec.edu.ups.dao.servicios.RespuestaTransferenciaExterna;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -93,7 +92,6 @@ public interface GestionUsuarioLocal {
 
     public void guardarTransferenciaLocal(Transferencia transfereciaLocal);
 
-    // public String realizarTransaccion(String cuenta, double monto, String tipoTransaccion);
     public byte[] toByteArray(InputStream in) throws IOException;
 
     public String obtenerFecha2(Date fecha);
@@ -111,8 +109,6 @@ public interface GestionUsuarioLocal {
     public Respuesta loginServicio(String username, String password);
 
     public Respuesta cambioContraseña(String correo, String contraAntigua, String contraActual);
-
-    public String realizarTransaccion(String cuenta, double monto, String tipoTransaccion);
 
     public Respuesta realizarTransferencia(String cedula, String cuentaAhorro2, double monto);
 
@@ -139,5 +135,7 @@ public interface GestionUsuarioLocal {
     public void intentosFallidosCliente(Cliente cliente);
 
     public void desbloquear(String cedula);
+
+    public String realizarTransaccion(String cuenta, double monto, String tipoTransaccion);
 
 }

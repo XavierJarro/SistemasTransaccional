@@ -6,61 +6,24 @@
 package ec.edu.ups.negocio;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Formatter;
-import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-import javax.ejb.Stateless;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.management.remote.NotificationResult;
 import javax.persistence.NoResultException;
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.MediaType;
-
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
 import ec.edu.ups.dao.ClienteDAO;
 import ec.edu.ups.dao.CuentaDeAhorroDAO;
 import ec.edu.ups.dao.DetallePolizaDAO;
@@ -71,12 +34,10 @@ import ec.edu.ups.dao.SolicitudPolizaDAO;
 import ec.edu.ups.dao.TranferenciaExternaDAO;
 import ec.edu.ups.dao.TransaccionDAO;
 import ec.edu.ups.dao.TransferenciaDAO;
-import ec.edu.ups.dao.servicios.PolizaRespuesta;
 import ec.edu.ups.dao.servicios.Respuesta;
 import ec.edu.ups.dao.servicios.RespuestaTransferenciaExterna;
 import ec.edu.ups.modelo.Cliente;
 import ec.edu.ups.modelo.CuentaDeAhorro;
-import ec.edu.ups.modelo.DetallePoliza;
 import ec.edu.ups.modelo.Empleado;
 import ec.edu.ups.modelo.Poliza;
 import ec.edu.ups.modelo.SesionCliente;
@@ -86,7 +47,6 @@ import ec.edu.ups.modelo.Transferencia;
 import ec.edu.ups.modelo.TransferenciaExterna;
 import java.util.List;
 import java.util.Properties;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -628,51 +588,6 @@ public class GestionUsuarios implements GestionUsuarioLocal {
         return respuesta;
     }
 
-    public String realizarTransaccion(String cuenta, double monto, String tipoTransaccion) {
-        CuentaDeAhorro clp = cuentaDeAhorroDAO.read(cuenta);
-        if (clp != null) {
-            if (tipoTransaccion.equalsIgnoreCase("deposito")) {
-                Double nvmonto = clp.getSaldoCuentaDeAhorro() + monto;
-                clp.setSaldoCuentaDeAhorro(nvmonto);
-                actualizarCuentaDeAhorro(clp);
-                Transaccion t = new Transaccion();
-                t.setCliente(clp.getCliente());
-                t.setMonto(monto);
-                t.setFecha(new Date());
-                t.setTipo("deposito");
-                t.setSaldoCuenta(nvmonto);
-                try {
-                    guardarTransaccion(t);
-                    return "Hecho";
-                } catch (Exception e1) {
-                    e1.getMessage();
-                }
-            } else if (tipoTransaccion.equalsIgnoreCase("retiro") && monto <= clp.getSaldoCuentaDeAhorro()) {
-                Double nvmonto2 = clp.getSaldoCuentaDeAhorro() - monto;
-                clp.setSaldoCuentaDeAhorro(nvmonto2);
-                actualizarCuentaDeAhorro(clp);
-                Transaccion t2 = new Transaccion();
-                t2.setCliente(clp.getCliente());
-                t2.setMonto(monto);
-                t2.setFecha(new Date());
-                t2.setTipo("retiro");
-                t2.setSaldoCuenta(nvmonto2);
-                try {
-                    guardarTransaccion(t2);
-                    return "Hecho";
-                } catch (Exception e1) {
-                    // TODO Auto-generated catch block
-                    e1.getMessage();
-                }
-            } else {
-                return "Monto exedido";
-            }
-        } else {
-            return "Cuenta Inexistente";
-        }
-        return "Fallido";
-    }
-
     public Respuesta realizarTransferencia(String cedula, String cuentaAhorro2, double monto) {
         Respuesta respuesta = new Respuesta();
         CuentaDeAhorro cuentaAhorro = cuentaDeAhorroDAO.getCuentaCedulaCliente(cedula);
@@ -1004,6 +919,51 @@ public class GestionUsuarios implements GestionUsuarioLocal {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String realizarTransaccion(String cuenta, double monto, String tipoTransaccion) {
+        CuentaDeAhorro clp = cuentaDeAhorroDAO.read(cuenta);
+        if (clp != null) {
+            if (tipoTransaccion.equalsIgnoreCase("deposito")) {
+                Double nvmonto = clp.getSaldoCuentaDeAhorro() + monto;
+                clp.setSaldoCuentaDeAhorro(nvmonto);
+                actualizarCuentaDeAhorro(clp);
+                Transaccion t = new Transaccion();
+                t.setCliente(clp.getCliente());
+                t.setMonto(monto);
+                t.setFecha(new Date());
+                t.setTipo("deposito");
+                t.setSaldoCuenta(nvmonto);
+                try {
+                    guardarTransaccion(t);
+                    return "Hecho";
+                } catch (Exception e1) {
+                    e1.getMessage();
+                }
+            } else if (tipoTransaccion.equalsIgnoreCase("retiro") && monto <= clp.getSaldoCuentaDeAhorro()) {
+                Double nvmonto2 = clp.getSaldoCuentaDeAhorro() - monto;
+                clp.setSaldoCuentaDeAhorro(nvmonto2);
+                actualizarCuentaDeAhorro(clp);
+                Transaccion t2 = new Transaccion();
+                t2.setCliente(clp.getCliente());
+                t2.setMonto(monto);
+                t2.setFecha(new Date());
+                t2.setTipo("retiro");
+                t2.setSaldoCuenta(nvmonto2);
+                try {
+                    guardarTransaccion(t2);
+                    return "Hecho";
+                } catch (Exception e1) {
+                    // TODO Auto-generated catch block
+                    e1.getMessage();
+                }
+            } else {
+                return "Monto exedido";
+            }
+        } else {
+            return "Cuenta Inexistente";
+        }
+        return "Fallido";
     }
 
 }

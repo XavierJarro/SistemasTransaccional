@@ -21,42 +21,17 @@ import javax.ws.rs.core.MediaType;
  *
  * @author Starman
  */
-@Path("/banco")
+@Path("/starbank")
 public class ServiciosBancoRest {
 
     @Inject
     private GestionUsuarioLocal on;
 
-    @GET
-    @Path("/obtenerCliente")
-    @Produces("application/json")
-    public Respuesta obtenerCliente(@QueryParam("numeroCuenta") String numeroCuenta) {
-        return on.obtenerClienteCuentaAhorro(numeroCuenta);
-    }
-
-    @POST
-    @Path("/login")
-    @Produces("application/json;charset=utf-8")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Respuesta login(@FormParam("username") String username, @FormParam("password") String password) {
-        Respuesta respuesta = on.loginServicio(username, password);
-        return respuesta;
-    }
-
-    @POST
-    @Path("/cambiocontraseña")
-    @Produces("application/json;charset=utf-8")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Respuesta cambioContraseña(@FormParam("correo") String correo, @FormParam("contraAntigua") String contraAntigua, @FormParam("contraActual") String contraActual) {
-        Respuesta respuesta = on.cambioContraseña(correo, contraAntigua, contraActual);
-        return respuesta;
-    }
-
     @POST
     @Path("/transaccion")
     @Produces("application/json")
     @Consumes("application/json")
-    public String realizarTransaccionBancaria(TransaccionRest transaccionRest) {
+    public String transaccionBancaria(TransaccionRest transaccionRest) {
         return on.realizarTransaccion(transaccionRest.getCuenta(), transaccionRest.getMonto(),
                 transaccionRest.getTipo());
     }
@@ -65,16 +40,40 @@ public class ServiciosBancoRest {
     @Path("/transferencia")
     @Produces("application/json")
     @Consumes("application/json")
-    public Respuesta realizarTransferencia(TransferenciaRest transferenciaRest) {
-        return on.realizarTransferencia(transferenciaRest.getCedula(), transferenciaRest.getCuentaDeAhorro(),
-                transferenciaRest.getMonto());
+    public Respuesta transferencia(TransferenciaRest transferenciaRest) {
+        return on.realizarTransferencia(transferenciaRest.getCedula(), transferenciaRest.getCuentaDeAhorro(), transferenciaRest.getMonto());
+    }
+
+    @GET
+    @Path("/obtenerCliente")
+    @Produces("application/json")
+    public Respuesta obtenerClientes(@QueryParam("numeroCuenta") String numeroCuenta) {
+        return on.obtenerClienteCuentaAhorro(numeroCuenta);
+    }
+
+    @POST
+    @Path("/login")
+    @Produces("application/json;charset=utf-8")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Respuesta loginCliente(@FormParam("username") String username, @FormParam("password") String password) {
+        Respuesta respuesta = on.loginServicio(username, password);
+        return respuesta;
+    }
+
+    @POST
+    @Path("/cambiopassword")
+    @Produces("application/json;charset=utf-8")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Respuesta cambioPassword(@FormParam("correo") String correo, @FormParam("contraAntigua") String contraAntigua, @FormParam("contraActual") String contraActual) {
+        Respuesta respuesta = on.cambioContraseña(correo, contraAntigua, contraActual);
+        return respuesta;
     }
 
     @POST
     @Path("/transferenciaExterna")
     @Produces("application/json")
     @Consumes("application/json")
-    public RespuestaTransferenciaExterna realizarTransferenciaExterna(TransferenciaExterna transferenciaExterna) {
+    public RespuestaTransferenciaExterna transferenciaExterna(TransferenciaExterna transferenciaExterna) {
         return on.realizarTransferenciaExterna(transferenciaExterna);
     }
 }
