@@ -65,7 +65,7 @@ public class LoginClientesBean {
         this.contraseña = contraseña;
     }
 
-    public String validarCliente() {
+    /*public String validarCliente() {
         List<Cliente> lstClis = gestionUsuarios.listaClientes();
         System.out.println("PASO LA LISTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         for (Cliente c : lstClis) {
@@ -89,7 +89,6 @@ public class LoginClientesBean {
                     gestionUsuarios.guardarSesion(sesionCliente);
                     try {
                         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("cliente", c);
-
                         FacesContext contex = FacesContext.getCurrentInstance();
                         contex.getExternalContext().redirect("PaginaPrincipalClienteBloqueado.xhtml");
                         //contex.getExternalContext().redirect("PrincipalCliente.xhtml?faces-redirect=true&cedula=" + c.getCedula());
@@ -107,8 +106,6 @@ public class LoginClientesBean {
 
                         FacesContext contex = FacesContext.getCurrentInstance();
                         contex.getExternalContext().redirect("PaginaPrincipalCliente.xhtml?faces-redirect=true&cedula=" + c.getCedula());
-                        //contex.getExternalContext().redirect("PrincipalCliente.xhtml?faces-redirect=true&cedula=" + c.getCedula());
-                        //PrincipalCliente
                     } catch (Exception e) {
                     }
                 }
@@ -123,6 +120,93 @@ public class LoginClientesBean {
                 return "InicioClientes";
             }
         }
+        return "InicioClientes";
+    }*/
+ /*public String validarCliente() {
+        List<Cliente> lstClis = gestionUsuarios.listaClientes();
+        System.out.println("PASO LA LISTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        for (Cliente c : lstClis) {
+            System.out.println("ENTROOOOOOOOOOOO EN EL FORRRRRR");
+            if (c.getUsuario().equalsIgnoreCase(usuario) && c.getClave().equalsIgnoreCase(contraseña)&&c.getEstado().equalsIgnoreCase("D")) {
+                System.out.println("ENTROOOOOOOOOOOO EN EL IFFFFFFFFFFFFFF CORRECTO");
+                SesionCliente sesionCliente = new SesionCliente();
+                sesionCliente.setCliente(c);
+                sesionCliente.setFechaSesion(new Date());
+                sesionCliente.setEstado("Correcto");
+                gestionUsuarios.guardarSesion(sesionCliente);
+                try {
+                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("cliente", c);
+                    FacesContext contex = FacesContext.getCurrentInstance();
+                    contex.getExternalContext().redirect("PaginaPrincipalCliente.xhtml?faces-redirect=true&cedula=" + c.getCedula());
+                } catch (Exception e) {
+                }
+            } else if (c.getUsuario().equalsIgnoreCase(usuario)) {
+                System.out.println("ENTROOOOOOOOOOOO EN EL IFFFFFFFFFFFFFF MAL");
+                SesionCliente sesionCliente2 = new SesionCliente();
+                sesionCliente2.setCliente(c);
+                sesionCliente2.setFechaSesion(new Date());
+                sesionCliente2.setEstado("Incorrecto");
+                gestionUsuarios.guardarSesion(sesionCliente2);
+                return "InicioClientes";
+            }
+        }
+        return "InicioClientes";
+    }*/
+    public String validarCliente() {
+        List<Cliente> lstClis = gestionUsuarios.listaClientes();
+        System.out.println("PASO LA LISTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        for (Cliente c : lstClis) {
+            System.out.println("ENTROOOOOOOOOOOO EN EL FORRRRRR");
+            if (c.getUsuario().equalsIgnoreCase(usuario) && c.getClave().equalsIgnoreCase(contraseña)) {
+
+                if (c.getEstado().equalsIgnoreCase("D")) {
+                    System.out.println("ENTROOOOOOOOOOOO EN EL IFFFFFFFFFFFFFF CORRECTO");
+                    SesionCliente sesionCliente = new SesionCliente();
+                    sesionCliente.setCliente(c);
+                    sesionCliente.setFechaSesion(new Date());
+                    sesionCliente.setEstado("Correcto");
+                    gestionUsuarios.guardarSesion(sesionCliente);
+                    try {
+                        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("cliente", c);
+                        FacesContext contex = FacesContext.getCurrentInstance();
+                        contex.getExternalContext().redirect("PaginaPrincipalCliente.xhtml?faces-redirect=true&cedula=" + c.getCedula());
+                    } catch (Exception e) {
+                    }
+                } else {
+                    try {
+                        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("cliente", c);
+                        FacesContext contex = FacesContext.getCurrentInstance();
+                        contex.getExternalContext().redirect("PaginaPrincipalClienteBloqueado.xhtml");
+                    } catch (Exception e) {
+                    }
+                }
+
+            } else if (c.getUsuario().equalsIgnoreCase(usuario)) {
+
+                if (c.getContador() != 0) {
+                    /*Cliente cli=new Cliente();
+                    cli.setCedula(c.getCedula());
+                    cli.setApellido(c.getApellido());
+                    cli.setClave(c.getClave());
+                    cli.setCorreo(c.getCorreo());
+                    cli.set*/
+                    int contador = 0;
+                    contador = c.getContador() - 1;
+                    c.setContador(contador);
+                    gestionUsuarios.intentosFallidosCliente(c);
+
+                }
+
+                System.out.println("ENTROOOOOOOOOOOO EN EL IFFFFFFFFFFFFFF MAL");
+                SesionCliente sesionCliente2 = new SesionCliente();
+                sesionCliente2.setCliente(c);
+                sesionCliente2.setFechaSesion(new Date());
+                sesionCliente2.setEstado("Incorrecto");
+                gestionUsuarios.guardarSesion(sesionCliente2);
+                return "InicioClientes";
+            }
+        }
+
         return "InicioClientes";
     }
 

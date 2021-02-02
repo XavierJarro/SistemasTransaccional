@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -53,8 +54,9 @@ public class CrearCliente {
     @PostConstruct
     private void iniciar() {
         cliente = new Cliente();
+        cliente.setEstado("D");
+        cliente.setContador(3);
         cuentaDeAhorro = new CuentaDeAhorro();
-        //solicitudDeCredito = new SolicitudDeCredito();
     }
 
     public GestionUsuarioLocal getGestionUsuarios() {
@@ -147,7 +149,10 @@ public class CrearCliente {
     }
 
     public String crearCliente() {
+        cliente.setEstado("D");
+        cliente.setContador(3);
         try {
+
             gestionUsuarios.guardarCliente(cliente);
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -221,6 +226,27 @@ public class CrearCliente {
             // TODO: handle exception
         }
         return null;
+    }
+
+    public List<Cliente> obtenerClientesBloqueados() {
+        try {
+            List<Cliente> clis = new ArrayList<Cliente>();
+            for (Cliente cli : gestionUsuarios.listaClientes()) {
+                if (cli.getEstado().equalsIgnoreCase("B")) {
+                    clis.add(cli);
+                }
+            }
+            return clis;
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        return null;
+    }
+
+    public String desbloquearCliente(String cedula) {
+        gestionUsuarios.desbloquear(cedula);
+        return null;
+
     }
 
 }

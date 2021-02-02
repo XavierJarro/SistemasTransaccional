@@ -18,9 +18,12 @@ public class Respuesta {
 
     private int codigo;
     private String descripcion;
-    private @JsonProperty("Cliente")Cliente cliente;
-    private @JsonProperty("Cuenta")CuentaDeAhorro cuentaDeAhorro;
-    private @JsonProperty("Poliza")List<PolizaRespuesta> listaCreditos;
+    private @JsonProperty("Cliente")
+    Cliente cliente;
+    private @JsonProperty("Cuenta")
+    CuentaDeAhorro cuentaDeAhorro;
+    private @JsonProperty("Poliza")
+    List<PolizaRespuesta> listaPolizas;
 
     public int getCodigo() {
         return codigo;
@@ -54,11 +57,12 @@ public class Respuesta {
         this.cuentaDeAhorro = cuentaDeAhorro;
     }
 
-    public List<PolizaRespuesta> getListaCreditos() {
-        return listaCreditos;
+    public List<PolizaRespuesta> getListaPolizas() {
+        return listaPolizas;
     }
 
-    public void setListaCreditos(List<PolizaRespuesta> listaCreditos) {
-        this.listaCreditos = listaCreditos;
+    public void setListaPolizas(List<PolizaRespuesta> listaPolizas) {
+        this.listaPolizas = listaPolizas;
     }
+
 }

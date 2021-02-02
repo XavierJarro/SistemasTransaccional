@@ -133,7 +133,11 @@ public interface GestionUsuarioLocal {
     public void guardarPoliza(Poliza poliza);
 
     public void aprobarPoliza(Poliza poliza, Cliente cliente);
-    
+
     public List<Poliza> polizasAprobados(String cedulaCliente);
+
+    public void intentosFallidosCliente(Cliente cliente);
+
+    public void desbloquear(String cedula);
 
 }

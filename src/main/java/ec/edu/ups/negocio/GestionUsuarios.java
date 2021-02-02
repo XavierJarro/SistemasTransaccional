@@ -575,7 +575,7 @@ public class GestionUsuarios implements GestionUsuarioLocal {
                 respuesta.setCliente(cliente);
                 cuentaDeAhorro = cuentaDeAhorroDAO.getCuentaCedulaCliente(cliente.getCedula());
                 respuesta.setCuentaDeAhorro(cuentaDeAhorro);
-                lstPolizas = polizasAprovadas(cliente.getCedula());
+                /*lstPolizas = polizasAprovadas(cliente.getCedula());
                 List<PolizaRespuesta> lstNuevaPolizas = new ArrayList<PolizaRespuesta>();
                 for (Poliza poliza : lstPolizas) {
                     PolizaRespuesta polizaRespuesta = new PolizaRespuesta();
@@ -588,7 +588,7 @@ public class GestionUsuarios implements GestionUsuarioLocal {
                     polizaRespuesta.setDetalles(poliza.getDetalles());
                     lstNuevaPolizas.add(polizaRespuesta);
                 }
-                respuesta.setListaCreditos(lstNuevaPolizas);
+                respuesta.setListaCreditos(lstNuevaPolizas);*/
             }
         } catch (Exception e) {
             respuesta.setCodigo(2);
@@ -965,4 +965,45 @@ public class GestionUsuarios implements GestionUsuarioLocal {
         }
         return listPolizTotales;
     }
+
+    public void bloquearCuenta(Cliente cliente) {
+        cliente.setEstado("B");
+        try {
+            clienteDAO.update(cliente);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void intentosFallidosCliente(Cliente cliente) {
+        if (cliente.getContador() == 0) {
+            bloquearCuenta(cliente);
+        } else {
+            try {
+                clienteDAO.update(cliente);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public void desbloquear(String cedula) {
+        try {
+            for (Cliente c : listaClientes()) {
+                if (c.getCedula().equalsIgnoreCase(cedula)) {
+                    c.setEstado("D");
+                    c.setContador(3);
+                    try {
+                        clienteDAO.update(c);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

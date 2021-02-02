@@ -29,10 +29,10 @@ public class Cliente implements Serializable {
     private String telefono1;
     private String telefono2;
     private String correo;
-    /*@Temporal(TemporalType.TIMESTAMP)
-    private Date fechaNacimiento;*/
     private String usuario;
     private String clave;
+    private String estado;
+    private int contador;
 
     public String getCedula() {
         return cedula;
@@ -90,14 +90,6 @@ public class Cliente implements Serializable {
         this.correo = correo;
     }
 
-    /*public Date getFechaNacimiento() {
-        return fechaNacimiento;
-    }
-
-    public void setFechaNacimiento(Date fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
-    }*/
-
     public String getUsuario() {
         return usuario;
     }
@@ -112,6 +104,22 @@ public class Cliente implements Serializable {
 
     public void setClave(String clave) {
         this.clave = clave;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public int getContador() {
+        return contador;
+    }
+
+    public void setContador(int contador) {
+        this.contador = contador;
     }
 
 }
