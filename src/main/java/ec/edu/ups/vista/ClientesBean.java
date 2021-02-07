@@ -2,6 +2,7 @@ package ec.edu.ups.vista;
 
 import ec.edu.ups.modelo.Cliente;
 import ec.edu.ups.modelo.CuentaDeAhorro;
+import ec.edu.ups.modelo.DetallePoliza;
 import ec.edu.ups.modelo.Poliza;
 import ec.edu.ups.modelo.SesionCliente;
 import ec.edu.ups.modelo.SolicitudPoliza;
@@ -351,6 +352,7 @@ public class ClientesBean {
     public List<Poliza> getLstListaPolizaAprobados() {
         return lstPolizasAprobados;
     }
+
     public void setLstListaCreditosAprobados(List<Poliza> lstListaPolizaAprobados) {
         this.lstPolizasAprobados = lstListaPolizaAprobados;
     }
@@ -370,13 +372,6 @@ public class ClientesBean {
 
     public void validarFechas() throws Exception {
         if (this.fechaInicio != null && this.fechaFinal != null) {
-            /*
-			 * System.out.println(fechaInicio.getClass()); DateFormat hourdateFormat = new
-			 * SimpleDateFormat("dd/MM/yyyy"); String d =
-			 * hourdateFormat.format(fechaInicio);
-			 * System.out.println(buscarCuentaDeAhorro.getNumeroCuentaDeAhorro());
-			 * System.out.println(d +"***"+fechaFinal);
-             */
             DateFormat hourdateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String inicioF = hourdateFormat.format(fechaInicio);
             String finalF = hourdateFormat.format(fechaFinal);
@@ -390,13 +385,7 @@ public class ClientesBean {
     }
 
     public void obtenerTransaccionesInicioFinal() {
-        /*
-		 * lstTransacciones =
-		 * gestionUsuarios.obtenerTransaccionesFechaHora(buscarCuentaDeAhorro.getCliente
-		 * ().getCedula(), fechaInicio, fechaFinal);
-         */
         System.out.println("Este es el tipo de transaccion : " + tipoTransaccion);
-
     }
 
     public void ultimosDias() {
@@ -449,26 +438,12 @@ public class ClientesBean {
                 fechasInvalidas = errorFechas();
                 lstTransacciones.removeAll(lstTransacciones);
             }
-
-            /*
-			 * System.out.println("H"+lstTransacciones.size());
-			 * System.out.println(cedulaParametro); System.out.println(new Date());
-             */
         }
 
         System.out.println("LISTA DE TRANSACCION SIZE :   " + lstTransacciones.size());
     }
 
     public String errorFechas() {
-        /*
-		 * System.out.println(fechaInicio.after(fechaFinal));;
-		 * System.out.println("Fecha inicio: "+this.fechaInicio);
-		 * System.out.println("Fecha final: "+this.fechaFinal);
-		 * if(fechaInicio.after(fechaFinal)) {
-		 * System.out.println("ENTROOOOO VALIDACION"); fechasInvalidas = false; return
-		 * "No se puede consultar entre estas fechas"; }else { fechasInvalidas = true; }
-		 * return "si";
-         */
         Date fechaInicioDate = this.fechaInicio;
         Date fechaFinDate = this.fechaFinal;
         System.out.println("Inicial: " + fechaInicioDate);
@@ -489,7 +464,7 @@ public class ClientesBean {
     public String obtenerTasa() {
         double meses = solicitudPoliza.getMesesPoliza();
         if (meses >= 0 && meses <= 29) {
-            tasa = 0.0;
+            tasa = 5.5;
         } else if (meses >= 30 && meses <= 59) {
             tasa = 5.5;
         } else if (meses >= 60 && meses <= 89) {
@@ -521,8 +496,13 @@ public class ClientesBean {
     }
 
     public void cambioVar(int cod) {
-        codigoCredito = cod;
-        editable = true;
+        if (editable == true) {
+            editable = false;
+        } else {
+            codigoCredito = cod;
+            editable = true;
+        }
+
     }
 
     public String crearSolicitudPoliza() throws IOException {
@@ -543,8 +523,20 @@ public class ClientesBean {
     }
 
     public void polizasAprobados(String cedula) {
-        System.out.println("ENTRO EN ESTE PINCHE METODO" + cedulaParametro);
         lstPolizasAprobados = gestionUsuarios.polizasAprobados(cedula);
+    }
+
+    public List<DetallePoliza> verDealles() {
+        List<DetallePoliza> list = gestionUsuarios.verPoliza(codigoCredito).getDetalles();
+        return list;
+    }
+
+    public void cobrarPoliza(/*int cod*/) {
+        gestionUsuarios.relizarCobro(codigoCredito);
+        /*editable = false;
+        codigoCredito = cod;
+        editable = true;*/
+
     }
 
 }

@@ -34,10 +34,12 @@ import ec.edu.ups.dao.SolicitudPolizaDAO;
 import ec.edu.ups.dao.TranferenciaExternaDAO;
 import ec.edu.ups.dao.TransaccionDAO;
 import ec.edu.ups.dao.TransferenciaDAO;
+import ec.edu.ups.dao.servicios.PolizaRespuesta;
 import ec.edu.ups.dao.servicios.Respuesta;
 import ec.edu.ups.dao.servicios.RespuestaTransferenciaExterna;
 import ec.edu.ups.modelo.Cliente;
 import ec.edu.ups.modelo.CuentaDeAhorro;
+import ec.edu.ups.modelo.DetallePoliza;
 import ec.edu.ups.modelo.Empleado;
 import ec.edu.ups.modelo.Poliza;
 import ec.edu.ups.modelo.SesionCliente;
@@ -535,20 +537,20 @@ public class GestionUsuarios implements GestionUsuarioLocal {
                 respuesta.setCliente(cliente);
                 cuentaDeAhorro = cuentaDeAhorroDAO.getCuentaCedulaCliente(cliente.getCedula());
                 respuesta.setCuentaDeAhorro(cuentaDeAhorro);
-                /*lstPolizas = polizasAprovadas(cliente.getCedula());
+                lstPolizas = polizasAprobadas(cliente.getCedula());
                 List<PolizaRespuesta> lstNuevaPolizas = new ArrayList<PolizaRespuesta>();
                 for (Poliza poliza : lstPolizas) {
                     PolizaRespuesta polizaRespuesta = new PolizaRespuesta();
                     polizaRespuesta.setCodigoPol(poliza.getCodigoPol());
                     polizaRespuesta.setEstado(poliza.getEstado());
                     polizaRespuesta.setMonto(poliza.getMonto());
+                    polizaRespuesta.setTasa(poliza.getTasa());
                     polizaRespuesta.setInteres(poliza.getInteres());
                     polizaRespuesta.setFechaRegistro(poliza.getFechaRegistro());
                     polizaRespuesta.setFechaVencimiento(poliza.getFechaVencimiento());
-                    polizaRespuesta.setDetalles(poliza.getDetalles());
                     lstNuevaPolizas.add(polizaRespuesta);
                 }
-                respuesta.setListaCreditos(lstNuevaPolizas);*/
+                respuesta.setListaPolizas(lstNuevaPolizas);
             }
         } catch (Exception e) {
             respuesta.setCodigo(2);
@@ -557,7 +559,7 @@ public class GestionUsuarios implements GestionUsuarioLocal {
         return respuesta;
     }
 
-    public List<Poliza> polizasAprovadas(String cedulaCliente) {
+    public List<Poliza> polizasAprobadas(String cedulaCliente) {
         List<Poliza> listaPolizas = polizaDAO.getPolizas();
         List<Poliza> listPolizasTotales = new ArrayList<Poliza>();
         for (Poliza poliza : listaPolizas) {
@@ -594,7 +596,10 @@ public class GestionUsuarios implements GestionUsuarioLocal {
         CuentaDeAhorro cuentaAhorroTransferir = cuentaDeAhorroDAO.read(cuentaAhorro2);
         try {
             if (cuentaAhorro.getSaldoCuentaDeAhorro() >= monto) {
-                cuentaAhorro.setSaldoCuentaDeAhorro(cuentaAhorro.getSaldoCuentaDeAhorro() - monto);
+
+                Double nvmonto2 = cuentaAhorro.getSaldoCuentaDeAhorro() - monto;
+
+                cuentaAhorro.setSaldoCuentaDeAhorro(nvmonto2);
                 actualizarCuentaDeAhorro(cuentaAhorro);
                 cuentaAhorroTransferir.setSaldoCuentaDeAhorro(cuentaAhorroTransferir.getSaldoCuentaDeAhorro() + monto);
                 actualizarCuentaDeAhorro(cuentaAhorroTransferir);
@@ -603,6 +608,16 @@ public class GestionUsuarios implements GestionUsuarioLocal {
                 transfereciaLocal.setCuentaDeAhorroDestino(cuentaAhorroTransferir);
                 transfereciaLocal.setMonto(monto);
                 guardarTransferenciaLocal(transfereciaLocal);
+
+                Transaccion t2 = new Transaccion();
+                t2.setCliente(cuentaAhorro.getCliente());
+                t2.setMonto(monto);
+                t2.setFecha(new Date());
+                t2.setTipo("Transferencia");
+                t2.setSaldoCuenta(nvmonto2);
+
+                guardarTransaccion(t2);
+
                 respuesta.setCodigo(1);
                 respuesta.setDescripcion("Transferencia Satisfactoria");
             } else {
@@ -623,11 +638,22 @@ public class GestionUsuarios implements GestionUsuarioLocal {
             if (cuentaDeAhorro != null) {
                 if (cuentaDeAhorro.getSaldoCuentaDeAhorro() >= transferenciaExterna.getMontoTransferencia()) {
                     transferenciaExterna.setFechaTransaccion(new Date());
+                    Double nvmonto2 = cuentaDeAhorro.getSaldoCuentaDeAhorro() - transferenciaExterna.getMontoTransferencia();
                     transferenciaExternaDAO.insert(transferenciaExterna);
-                    cuentaDeAhorro.setSaldoCuentaDeAhorro(cuentaDeAhorro.getSaldoCuentaDeAhorro() - transferenciaExterna.getMontoTransferencia());
+                    cuentaDeAhorro.setSaldoCuentaDeAhorro(nvmonto2);
                     cuentaDeAhorroDAO.update(cuentaDeAhorro);
                     respuestaTransferenciaExterna.setCodigo(1);
                     respuestaTransferenciaExterna.setDescripcion("Transferencia se ha realizado exitosamente");
+
+                    Transaccion t2 = new Transaccion();
+                    t2.setCliente(cuentaDeAhorro.getCliente());
+                    t2.setMonto(transferenciaExterna.getMontoTransferencia());
+                    t2.setFecha(new Date());
+                    t2.setTipo("Transferencia externa");
+                    t2.setSaldoCuenta(nvmonto2);
+
+                    guardarTransaccion(t2);
+
                 } else {
                     respuestaTransferenciaExterna.setCodigo(2);
                     respuestaTransferenciaExterna.setDescripcion("No tiene esa cantidad en su cuenta");
@@ -714,162 +740,6 @@ public class GestionUsuarios implements GestionUsuarioLocal {
         polizaDAO.insert(poliza);
     }
 
-    public void aprobarPoliza(Poliza poliza, Cliente cliente) {
-        String destinatario = cliente.getCorreo();
-        String asunto = "APROBACIÓN DE POLIZA";
-        String cuerpo = "STARBANK\n"
-                + "------------------------------------------------------------------------------\n"
-                + "              Estimado(a): " + cliente.getNombre().toUpperCase() + " "
-                + cliente.getApellido().toUpperCase() + "\n"
-                + "------------------------------------------------------------------------------\n"
-                + "STARBANK le informa que su poliza ha sido aprobado.                   \n"
-                + "                                                                              \n"
-                + "                         Fecha: " + obtenerFecha(poliza.getFechaRegistro()) + "\n"
-                + "                                                                              \n"
-                + "La informacion de sus cuotas se encuentra en el archivo adjunto.              \n"
-                + "------------------------------------------------------------------------------\n";
-
-        CompletableFuture.runAsync(() -> {
-            try {
-                // enviarCorreo2(destinatario, asunto, cuerpo, poliza);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    /*public void enviarCorreo2(String destinatario, String asunto, String cuerpo, Poliza poliza) {
-        Properties propiedad = new Properties();
-        propiedad.setProperty("mail.smtp.host", "smtp.gmail.com");
-        propiedad.setProperty("mail.smtp.starttls.enable", "true");
-        propiedad.setProperty("mail.smtp.port", "587");
-
-        Session sesion = Session.getDefaultInstance(propiedad);
-        String correoEnvia = "starbankoficial@gmail.com";
-        String contrasena = "ZJRIcfjy1719";
-
-        MimeMessage mail = new MimeMessage(sesion);
-        Multipart multipart = new MimeMultipart();
-
-        MimeBodyPart attachmentPart = new MimeBodyPart();
-
-        MimeBodyPart textPart = new MimeBodyPart();
-
-        try {
-            mail.setFrom("STARBANK <" + correoEnvia + ">");
-            mail.addRecipient(Message.RecipientType.TO, new InternetAddress(destinatario));
-            mail.setSubject(asunto);
-            File f = generarTabla(poliza);
-            attachmentPart.attachFile(f);
-            textPart.setText(cuerpo);
-            multipart.addBodyPart(attachmentPart);
-            multipart.addBodyPart(textPart);
-            mail.setContent(multipart);
-
-            Transport transportar = sesion.getTransport("smtp");
-            transportar.connect(correoEnvia, contrasena);
-            transportar.sendMessage(mail, mail.getRecipients(Message.RecipientType.TO));
-        } catch (AddressException | IOException ex) {
-            System.out.println(ex.getMessage());
-        } catch (MessagingException ex) {
-            System.out.println(ex.getMessage());
-        }
-    }
-
-    public File generarTablaAmor(Credito credito) {
-        try {
-            Cliente cliente = credito.getSolicitud().getClienteCredito();
-            double monto = credito.getMonto();
-            double interes = credito.getInteres();
-            int meses = Integer.parseInt(credito.getSolicitud().getMesesCredito());
-            Document document = new Document();
-
-            File file = File.createTempFile("TablaAmortizacion", ".pdf");
-            FileOutputStream fos = new FileOutputStream(file);
-            PdfWriter.getInstance(document, fos);
-            document.open();
-            Paragraph par = new Paragraph();
-            par.add(new Phrase("COOP JAM"));
-            par.setAlignment(Element.ALIGN_CENTER);
-            document.add(par);
-            document.add(Chunk.NEWLINE);
-            Paragraph par1 = new Paragraph();
-            par1.add(new Phrase("TABLA DE AMORTIZACIÓN"));
-            par1.setAlignment(Element.ALIGN_CENTER);
-            document.add(par1);
-            document.add(Chunk.NEWLINE);
-            Paragraph par2 = new Paragraph();
-            par2.add(new Phrase("               Detalles de Crédito"));
-            par2.add(Chunk.NEWLINE);
-            par2.add(new Phrase("               Cliente: " + cliente.getNombre() + " " + cliente.getApellido()));
-            par2.add(Chunk.NEWLINE);
-            par2.add(new Phrase("               Fecha Registro: " + obtenerFecha2(credito.getFechaRegistro())));
-            par2.add(Chunk.NEWLINE);
-            par2.add(new Phrase("               Fecha Vencimiento: " + obtenerFecha2(credito.getFechaVencimiento())));
-            par2.add(Chunk.NEWLINE);
-            par2.add(new Phrase("               Monto: " + monto));
-            par2.add(Chunk.NEWLINE);
-            par2.add(new Phrase("               Interes: " + interes + "%"));
-            par2.add(Chunk.NEWLINE);
-            par2.add(new Phrase("               Plazo: " + meses + " meses"));
-            document.add(par2);
-            document.add(Chunk.NEWLINE);
-
-            PdfPTable table = new PdfPTable(6);
-            PdfPCell celdaInicial = new PdfPCell(new Paragraph("Detalles de las Cuotas"));
-            celdaInicial.setColspan(6);
-            celdaInicial.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.addCell(celdaInicial);
-            PdfPCell ct1 = new PdfPCell(new Phrase("#Cuota"));
-            ct1.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.addCell(ct1);
-            PdfPCell ct2 = new PdfPCell(new Phrase("Fecha"));
-            ct2.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.addCell(ct2);
-            PdfPCell ct3 = new PdfPCell(new Phrase("Cuota"));
-            ct3.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.addCell(ct3);
-            PdfPCell ct4 = new PdfPCell(new Phrase("Capital"));
-            ct4.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.addCell(ct4);
-            PdfPCell ct5 = new PdfPCell(new Phrase("Interes"));
-            ct5.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.addCell(ct5);
-            PdfPCell ct6 = new PdfPCell(new Phrase("Saldo"));
-            ct6.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.addCell(ct6);
-
-            for (DetallePoliza dcre : credito.getDetalles()) {
-                PdfPCell cell1 = new PdfPCell(new Phrase(String.valueOf(dcre.getNumeroCuota())));
-                cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-                table.addCell(cell1);
-                PdfPCell cell2 = new PdfPCell(new Phrase(obtenerFecha2(dcre.getFechaPago())));
-                cell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-                table.addCell(cell2);
-                PdfPCell cell3 = new PdfPCell(new Phrase(String.valueOf(valorDecimalCr(dcre.getSaldo()))));
-                cell3.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                table.addCell(cell3);
-                PdfPCell cell4 = new PdfPCell(new Phrase(String.valueOf(valorDecimalCr(dcre.getCuota()))));
-                cell4.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                table.addCell(cell4);
-                PdfPCell cell5 = new PdfPCell(new Phrase(String.valueOf(valorDecimalCr(dcre.getInteres()))));
-                cell5.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                table.addCell(cell5);
-                PdfPCell cell6 = new PdfPCell(new Phrase(String.valueOf(valorDecimalCr(dcre.getMonto()))));
-                cell6.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                table.addCell(cell6);
-            }
-            document.add(table);
-
-            document.close();
-            return file;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }*/
     public List<Poliza> polizasAprobados(String cedulaCliente) {
         List<Poliza> listaPolizas = polizaDAO.getPolizas();
         List<Poliza> listPolizTotales = new ArrayList<Poliza>();
@@ -964,6 +834,59 @@ public class GestionUsuarios implements GestionUsuarioLocal {
             return "Cuenta Inexistente";
         }
         return "Fallido";
+    }
+
+    public List<DetallePoliza> crearTabla(int cuotas, double monto) {
+        System.out.println("monto ennnnnnnnn crear tablaaaaaaaaaaa" + monto);
+        List<DetallePoliza> listaDet = new ArrayList<>();
+        Date fecha = new Date();
+        List<Date> fechas = new ArrayList<>();
+        for (int i = 0; i < cuotas; i++) {
+            DetallePoliza detalle = new DetallePoliza();
+
+            Calendar calendar1 = Calendar.getInstance();
+            calendar1.add(Calendar.MONTH, 1);
+            fecha = calendar1.getTime();
+            fechas.add(fecha);
+            detalle.setNumeroCuota(i + 1);
+            detalle.setInteres(monto);
+            detalle.setFecha(fecha);
+            detalle.setEstado("Pendiente");
+            listaDet.add(detalle);
+        }
+        return listaDet;
+    }
+
+    public Poliza verPoliza(int codigo) {
+        Poliza pol = polizaDAO.read(codigo);
+        return pol;
+    }
+
+    public void relizarCobro(int codigo) {
+        Poliza pol = verPoliza(codigo);
+        CuentaDeAhorro clp = buscarCuentaDeAhorroCliente(pol.getSolicitud().getClientePoliza().getCedula());
+        for (DetallePoliza dp : pol.getDetalles()) {
+            dp.setEstado("Pagado");
+            detallepolizaDAO.update(dp);
+            Double nvmonto2 = clp.getSaldoCuentaDeAhorro() + dp.getInteres();
+            clp.setSaldoCuentaDeAhorro(nvmonto2);
+            actualizarCuentaDeAhorro(clp);
+            Transaccion transaccion = new Transaccion();
+            transaccion.setCliente(clp.getCliente());
+            transaccion.setMonto(dp.getInteres());
+            transaccion.setFecha(new Date());
+            transaccion.setTipo("Credito");
+            transaccion.setSaldoCuenta(nvmonto2);
+
+            try {
+                guardarTransaccion(transaccion);
+            } catch (Exception e1) {
+                // TODO Auto-generated catch block
+                e1.getMessage();
+            }
+
+        }
+
     }
 
 }

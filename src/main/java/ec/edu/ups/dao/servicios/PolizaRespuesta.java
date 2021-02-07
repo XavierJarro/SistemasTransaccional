@@ -18,6 +18,7 @@ public class PolizaRespuesta {
     private int codigoPol;
     private String estado;
     private double monto;
+    private double tasa;
     private double interes;
     private Date fechaRegistro;
     private Date fechaVencimiento;
@@ -77,6 +78,14 @@ public class PolizaRespuesta {
 
     public void setDetalles(List<DetallePoliza> detalles) {
         this.detalles = detalles;
+    }
+
+    public void setTasa(double tasa) {
+        this.tasa = tasa;
+    }
+
+    public double getTasa() {
+        return tasa;
     }
 
 }

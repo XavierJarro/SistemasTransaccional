@@ -5,6 +5,7 @@ import ec.edu.ups.modelo.DetallePoliza;
 import ec.edu.ups.modelo.Empleado;
 import ec.edu.ups.modelo.Poliza;
 import ec.edu.ups.modelo.SolicitudPoliza;
+import ec.edu.ups.modelo.Transaccion;
 import ec.edu.ups.negocio.GestionUsuarioLocal;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -246,57 +247,50 @@ public class LoginBean {
         return null;
     }
 
-    /*public String cargarSolAR(int cod) {
-        editable = true;
-
-        List<SolicitudPoliza> solii = empleadoON.listadoSolicitudPolizas();
-        for (SolicitudPoliza sol : solii) {
-            if (sol.getCodigoPoliza() == cod) {
-                solicitudPolizaAux = sol;
-                tipoC = tipoCliente(sol);
-            }
-        }
-        return null;
-    }*/
-
- /*public String tipoCliente(SolicitudPoliza poliza) {
-        String tipo = poliza.getTipoCliente();
-        if (tipo.equals("1")) {
-            String mensaje = "Este un Buen cliente para el credito, Se recomienda cambio";
-            return mensaje;
-        } else if (tipo.equalsIgnoreCase("2")) {
-            String mensaje2 = "Es un MAL CLIENTE  para el credito, Se recomienda Rechazar";
-            return mensaje2;
-        }
-
-        return " ";
-    }*/
     public String aprobar(int cod) {
-        System.out.println("//////-/////////-/////" + empleado.getNombre());
-       //cod = solicitudDePoliza.getCodigoPoliza();
-        System.out.println("codigooooooooooooooooooooooooooooooooooo-------------------------------------"+cod);
         for (SolicitudPoliza sol : solicitudes) {
             if (sol.getCodigoPoliza() == cod && sol.getEstado().equalsIgnoreCase("Solicitando")) {
 
                 Poliza poliza = new Poliza();
-                poliza.setFechaRegistro(new Date());
-                poliza.setInteres(12);
-                poliza.setMonto(sol.getMontoPoliza());
-                poliza.setJefeC(empleado);
+                double interes = 0;
                 poliza.setEstado("Aprobado");
+                System.out.println("el montoooooooooooooooooooooooooooooooooooo" + sol.getMontoPoliza());
+                poliza.setMonto(sol.getMontoPoliza());
+                poliza.setTasa(sol.getTasaPoliza());
+                interes = sol.getMontoPoliza() * (sol.getTasaPoliza() / 100);
+                poliza.setInteres(interes);
+                poliza.setFechaRegistro(new Date());
+                poliza.setJefeC(empleado);
                 poliza.setSolicitud(sol);
-                //List<DetallePoliza> li = empleadoON.crearTablaAmortizacion(Integer.parseInt(sol.getMesesPoliza(),sol.getMontoPoliza(), 12.00);
-                //System.out.println(li.toString());
-                //poliza.setFechaVencimiento(li.get(li.size() - 1).getFechaPago());
-                //poliza.setDetalles(li);
+                List<DetallePoliza> li = empleadoON.crearTabla(sol.getMesesPoliza(), interes);
+                System.out.println(li.toString());
+                poliza.setFechaVencimiento(li.get(li.size() - 1).getFecha());
+                poliza.setDetalles(li);
+
                 empleadoON.guardarPoliza(poliza);
-                empleadoON.aprobarPoliza(poliza, sol.getClientePoliza());
+                //empleadoON.aprobarPoliza(poliza, sol.getClientePoliza());
                 solicitudDePoliza.setEstado("Aprobado");
                 empleadoON.actualizarSolicitudPoliza(solicitudDePoliza);
+
                 CuentaDeAhorro ccv = empleadoON.buscarCuentaDeAhorroCliente(sol.getClientePoliza().getCedula());
-                ccv.setSaldoCuentaDeAhorro(ccv.getSaldoCuentaDeAhorro() - sol.getMontoPoliza());
+                Double nvmonto2 = ccv.getSaldoCuentaDeAhorro() - sol.getMontoPoliza();
+                ccv.setSaldoCuentaDeAhorro(nvmonto2);
                 empleadoON.actualizarCuentaDeAhorro(ccv);
-                //solicitudDePoliza = new SolicitudPoliza();
+
+                Transaccion t2 = new Transaccion();
+                t2.setCliente(ccv.getCliente());
+                t2.setMonto(sol.getMontoPoliza());
+                t2.setFecha(new Date());
+                t2.setTipo("poliza");
+                t2.setSaldoCuenta(nvmonto2);
+                try {
+                    empleadoON.guardarTransaccion(t2);
+
+                } catch (Exception e1) {
+                    e1.getMessage();
+                }
+
+                solicitudDePoliza = new SolicitudPoliza();
                 editable = false;
                 editabledos = false;
                 loadDataSol();

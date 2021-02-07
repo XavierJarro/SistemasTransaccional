@@ -26,8 +26,6 @@ public class DetallePoliza implements Serializable {
     private int codigoDetalle;
     private int numeroCuota;
     private double interes;
-    private double monto;
-    private double saldo;
     @Temporal(TemporalType.TIMESTAMP)
     private Date fecha;
     private String estado;
@@ -56,22 +54,6 @@ public class DetallePoliza implements Serializable {
         this.interes = interes;
     }
 
-    public double getMonto() {
-        return monto;
-    }
-
-    public void setMonto(double monto) {
-        this.monto = monto;
-    }
-
-    public double getSaldo() {
-        return saldo;
-    }
-
-    public void setSaldo(double saldo) {
-        this.saldo = saldo;
-    }
-
     public Date getFecha() {
         return fecha;
     }
@@ -87,8 +69,5 @@ public class DetallePoliza implements Serializable {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-    
-    
-    
 
 }
