@@ -15,7 +15,6 @@ import java.util.List;
 
 import ec.edu.ups.modelo.Cliente;
 import ec.edu.ups.modelo.CuentaDeAhorro;
-import ec.edu.ups.modelo.DetallePoliza;
 import ec.edu.ups.modelo.Empleado;
 import ec.edu.ups.modelo.Poliza;
 import ec.edu.ups.modelo.SesionCliente;
@@ -137,7 +136,7 @@ public interface GestionUsuarioLocal {
 
     public String realizarTransaccion(String cuenta, double monto, String tipoTransaccion);
 
-    public List<DetallePoliza> crearTabla(int cuotas, double monto);
+    public Date crearFechaVencimiento(int cuotas);
 
     public Poliza verPoliza(int codigo);
 

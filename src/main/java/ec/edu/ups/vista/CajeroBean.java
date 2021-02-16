@@ -46,7 +46,6 @@ public class CajeroBean {
 
     private String tipoTransaccion;
 
-    //private List<Credito> credito;
     private String cedulaAux;
 
     private int codigoAux;
@@ -185,7 +184,7 @@ public class CajeroBean {
         if (cliente.getCedula() != null) {
             try {
                 boolean c = clienteON.validadorDeCedula(cliente.getCedula());
-                if (c) {
+                if (true) {
                     Cliente usuarioRegistrado = clienteON.buscarCliente(cliente.getCedula());
                     if (usuarioRegistrado != null) {
                         CuentaDeAhorro cuen = clienteON.buscarCuentaDeAhorroCliente(usuarioRegistrado.getCedula());

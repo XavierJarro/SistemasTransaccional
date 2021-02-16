@@ -55,33 +55,42 @@
                                     #{poliza.codigoPol}
                             </h:column>
                             <h:column>
-                                <f:facet name="header">Plazo</f:facet>
-                                    #{poliza.solicitud.mesesPoliza}
-                            </h:column>
-                            <h:column>
                                 <f:facet name="header">Valor Poliza</f:facet>  
                                     #{poliza.monto}
                             </h:column>
                             <h:column>
-                                <f:facet name="header">Interes</f:facet>  
-                                    #{poliza.tasa}
+                                <f:facet name="header">% Tasa</f:facet>
+                                    #{poliza.solicitud.tasaPoliza}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Plazo</f:facet>
+                                    #{poliza.solicitud.mesesPoliza}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Interes</f:facet>
+                                    #{poliza.interes}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Total</f:facet>
+                                    #{poliza.total}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Fecha</f:facet>  
+                                    #{poliza.fechaRegistro}
                             </h:column>
                             <h:column>
                                 <f:facet name="header">Fecha Vencimiento</f:facet> 
                                     #{poliza.fechaVencimiento}
                             </h:column>
                             <h:column>
-                                <f:facet name="header">Detalles Poliza</f:facet>
-                                <h:commandButton
-                                    action="#{clientesBean.cambioVar(poliza.codigoPol)}"
-                                    value="Consultar" class="btn btn-success">
-                                    <f:ajax render="Detalles" />
-                                </h:commandButton>
+                                <f:facet name="header">Estado</f:facet> 
+                                    #{poliza.estado}
                             </h:column>
+
                             <h:column>
                                 <f:facet name="header">Cobrar Poliza</f:facet>
                                 <h:commandButton
-                                    action="#{clientesBean.cobrarPoliza()}"
+                                    action="#{clientesBean.cobrarPoliza(poliza.codigoPol)}"
                                     value="Cobrar" class="btn btn-success">
                                     <f:ajax render="Detalles cuenta" />
                                 </h:commandButton>
@@ -89,32 +98,7 @@
                         </h:dataTable>
                     </div>
                 </h:form>
-                <h:panelGroup id="Detalles">
-                    <h:form id="det" rendered="#{clientesBean.editable}">
-                        <h2>Detalle Poliza</h2>
-                        <h:dataTable value="#{clientesBean.verDealles()}" var="tra"
-                                     class="table table-bordered table-hover table-striped">
-                            <h:column>
-                                <f:facet name="header">Numero de Cuota</f:facet>
-                                    #{tra.numeroCuota}
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">Valor a Cobrar</f:facet>
-                                    #{tra.interes}
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">Estado</f:facet>
-                                    #{tra.estado}
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">Fecha de Pago</f:facet> 
-                                    #{clientesBean.obtenerFecha(tra.fecha)}
-                            </h:column>
 
-                        </h:dataTable>
-
-                    </h:form>
-                </h:panelGroup>
 
 
             </ui:define>

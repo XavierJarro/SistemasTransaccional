@@ -1,7 +1,6 @@
 package ec.edu.ups.vista;
 
 import ec.edu.ups.modelo.CuentaDeAhorro;
-import ec.edu.ups.modelo.DetallePoliza;
 import ec.edu.ups.modelo.Empleado;
 import ec.edu.ups.modelo.Poliza;
 import ec.edu.ups.modelo.SolicitudPoliza;
@@ -259,13 +258,14 @@ public class LoginBean {
                 poliza.setTasa(sol.getTasaPoliza());
                 interes = sol.getMontoPoliza() * (sol.getTasaPoliza() / 100);
                 poliza.setInteres(interes);
+                poliza.setTotal(interes*sol.getMesesPoliza());
                 poliza.setFechaRegistro(new Date());
                 poliza.setJefeC(empleado);
                 poliza.setSolicitud(sol);
-                List<DetallePoliza> li = empleadoON.crearTabla(sol.getMesesPoliza(), interes);
+                Date li = empleadoON.crearFechaVencimiento(sol.getMesesPoliza());
                 System.out.println(li.toString());
-                poliza.setFechaVencimiento(li.get(li.size() - 1).getFecha());
-                poliza.setDetalles(li);
+                poliza.setFechaVencimiento(li);
+                //poliza.setDetalles(li);
 
                 empleadoON.guardarPoliza(poliza);
                 //empleadoON.aprobarPoliza(poliza, sol.getClientePoliza());

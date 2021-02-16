@@ -2,7 +2,6 @@ package ec.edu.ups.vista;
 
 import ec.edu.ups.modelo.Cliente;
 import ec.edu.ups.modelo.CuentaDeAhorro;
-import ec.edu.ups.modelo.DetallePoliza;
 import ec.edu.ups.modelo.Poliza;
 import ec.edu.ups.modelo.SesionCliente;
 import ec.edu.ups.modelo.SolicitudPoliza;
@@ -519,23 +518,16 @@ public class ClientesBean {
             addMessage("Atencion", "Usted ya ha enviado una solicitud de poliza para su aprovacion");
         }
         solicitudPoliza = new SolicitudPoliza();
-        return "SolicitudCredito";
+        return "PaginaPrincipalCliente";
     }
 
     public void polizasAprobados(String cedula) {
         lstPolizasAprobados = gestionUsuarios.polizasAprobados(cedula);
     }
 
-    public List<DetallePoliza> verDealles() {
-        List<DetallePoliza> list = gestionUsuarios.verPoliza(codigoCredito).getDetalles();
-        return list;
-    }
-
-    public void cobrarPoliza(/*int cod*/) {
-        gestionUsuarios.relizarCobro(codigoCredito);
-        /*editable = false;
+    public void cobrarPoliza(int cod) {
         codigoCredito = cod;
-        editable = true;*/
+        gestionUsuarios.relizarCobro(cod);
 
     }
 

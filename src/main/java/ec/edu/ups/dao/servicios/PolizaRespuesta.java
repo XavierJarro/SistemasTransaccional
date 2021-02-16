@@ -5,9 +5,7 @@
  */
 package ec.edu.ups.dao.servicios;
 
-import ec.edu.ups.modelo.DetallePoliza;
 import java.util.Date;
-import java.util.List;
 
 /**
  *
@@ -22,7 +20,6 @@ public class PolizaRespuesta {
     private double interes;
     private Date fechaRegistro;
     private Date fechaVencimiento;
-    private List<DetallePoliza> detalles;
 
     public int getCodigoPol() {
         return codigoPol;
@@ -70,14 +67,6 @@ public class PolizaRespuesta {
 
     public void setFechaVencimiento(Date fechaVencimiento) {
         this.fechaVencimiento = fechaVencimiento;
-    }
-
-    public List<DetallePoliza> getDetalles() {
-        return detalles;
-    }
-
-    public void setDetalles(List<DetallePoliza> detalles) {
-        this.detalles = detalles;
     }
 
     public void setTasa(double tasa) {

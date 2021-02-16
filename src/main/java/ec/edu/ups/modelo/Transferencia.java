@@ -31,34 +31,74 @@ public class Transferencia implements Serializable {
     @JoinColumn(name = "numero_cuenta")
     private CuentaDeAhorro cuentaDeAhorroDestino;
 
+    /**
+     * Metodo que permite obtener el atributo
+     *
+     *
+     */
     public int getCodigoTransferenciaLocal() {
         return codigoTransferenciaLocal;
     }
 
+    /**
+     * Metodo que permite asignarle un valor al atributo
+     *
+     *
+     */
     public void setCodigoTransferenciaLocal(int codigoTransferenciaLocal) {
         this.codigoTransferenciaLocal = codigoTransferenciaLocal;
     }
 
+    /**
+     * Metodo que permite obtener el atributo
+     *
+     *
+     */
     public double getMonto() {
         return monto;
     }
 
+    /**
+     * Metodo que permite asignarle un valor al atributo
+     *
+     *
+     */
     public void setMonto(double monto) {
         this.monto = monto;
     }
 
+    /**
+     * Metodo que permite obtener el atributo
+     *
+     *
+     */
     public Cliente getCliente() {
         return cliente;
     }
 
+    /**
+     * Metodo que permite asignarle un valor al atributo
+     *
+     *
+     */
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
 
+    /**
+     * Metodo que permite obtener el atributo
+     *
+     *
+     */
     public CuentaDeAhorro getCuentaDeAhorroDestino() {
         return cuentaDeAhorroDestino;
     }
 
+    /**
+     * Metodo que permite asignarle un valor al atributo
+     *
+     *
+     */
     public void setCuentaDeAhorroDestino(CuentaDeAhorro cuentaDeAhorroDestino) {
         this.cuentaDeAhorroDestino = cuentaDeAhorroDestino;
     }
